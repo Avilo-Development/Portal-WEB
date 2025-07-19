@@ -2,79 +2,60 @@
 
 import ITechnician from "@/interfaces/technician.interface";
 import IUser from "@/interfaces/user.interface";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import ITimeReporting from "@/interfaces/time_reporting.interface";
 import ISalary from "@/interfaces/salary.interface";
+import { endpoints } from "@/services/api";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useFetch } from "../useFetch";
 
-interface IContext{
-    user:any, setUser:any, technician:ITechnician[], setTechnician:any, salary:any, setSalary:any, timeReport:any, setTimeReport:any
+interface IContext {
+    users: any, setUsers: any, technician: ITechnician[], setTechnician: any, salary: any, setSalary: any, timeReport: any, setTimeReport: any, finance: any, account: any, token: any
 }
 
 const GlobalContext = createContext<IContext>({})
 
-export default function GlobalProvider({children}:{children:ReactNode}){
+export default function GlobalProvider({ children }: { children: ReactNode }) {
     const data = useProviderData()
+    const router = useRouter()
+    const [token, setToken] = useState<any>()
+    useEffect(() => {
+        const t = sessionStorage.getItem('token') || null
+        setToken(t)
+        if (!t) {
+            router.push('/login')
+            return
+        }
+    }, [])
     return (
-        <GlobalContext value={data}>
+        <GlobalContext value={{ ...data, token }}>
             {children}
         </GlobalContext>
     )
 }
 
-export function useData(){
+export function useData() {
     return useContext(GlobalContext)
 }
 
-function useProviderData(){
-    const [user, setUser] = useState<IUser[]>([{
-        id: "01",
-        name: "Dmytriy",
-        role: "director",
-        hcp_link: "string",
-        picture: "string",
-        phone: "string",
-        birthday: new Date(),
-        created_at: new Date(),
-        email: "string",
-        password: "string"
-    },{
-        id: "02",
-        name: "Artem",
-        role: "tech",
-        hcp_link: "string",
-        picture: "string",
-        phone: "string",
-        birthday: new Date(),
-        created_at: new Date(),
-        email: "string",
-        password: "string"
-    },{
-        id: "03",
-        name: "Oleg",
-        role: "tech",
-        hcp_link: "string",
-        picture: "string",
-        phone: "string",
-        birthday: new Date(),
-        created_at: new Date(),
-        email: "string",
-        password: "string"
-    },])
-    const [technician, setTechnician] = useState<ITechnician[]>([{
-        id: "01",
-        user_id: user.find((obj:any) => obj.id == '01'),
-        salary: 60
-    },{
-        id: "02",
-        user_id: user.find((obj:any) => obj.id == '02'),
-        salary: 55
-    },{
-        id: "03",
-        user_id: user.find((obj:any) => obj.id == '03'),
-        salary: 33
-    },])
+function useProviderData() {
+    const [account, setAccount] = useState({})
+    const [users, setUsers] = useState<IUser[]>([])
+    const [technician, setTechnician] = useState<ITechnician[]>([])
     const [salary, setSalary] = useState<ISalary[]>([])
     const [timeReport, setTimeReport] = useState<ITimeReporting[]>([])
 
-    return {user, setUser, technician, setTechnician, salary, setSalary, timeReport, setTimeReport}
+    const loadData = async () => {
+        const bearer = sessionStorage.getItem('token') || null
+        if (!bearer) { return }
+        setAccount(await useFetch(endpoints.user.account))
+        setUsers(await useFetch(endpoints.user.create))
+    }
+
+    useEffect(() => {
+        loadData()
+    }, [])
+
+    return { users, setUsers, technician, setTechnician, salary, setSalary, timeReport, setTimeReport, account }
 }
