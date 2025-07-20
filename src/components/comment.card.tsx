@@ -1,17 +1,33 @@
+import { useData } from "@/hooks/contexts/global.context";
 import Badge from "./badge";
+import { useDelete } from "@/hooks/useFetch";
+import { endpoints } from "@/services/api";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
-export default function CommentCard({ text, name, date, status, picture, id }: { text: string, name: string, date: any, status: string, id: string, picture: string }) {
-    return <div className="flex p-2 gap-2 w-fit max-w-[90%]">
+export default function CommentCard({ text, name, date, status, picture, user_id, id }: { text: string, name: string, date: any, status: string, user_id: string, picture: string, id: string }) {
+    const { account } = useData()
+    const [isAccount, setIsAccount] = useState(false)
+    useEffect(() => {
+        setIsAccount(account.id === user_id)
+    }, [])
+    const handleRemove = async () => {
+        await useDelete(endpoints.comment.remove(id))
+    }
+    return <div className="flex p-2 gap-2">
         <img src={picture} alt="User picture" className="size-8 rounded-full" />
-        <div className="flex flex-col w-full">
-            <div className="flex flex-col bg-black/10 py-0.5 px-2 rounded-lg">
-                <div className="flex gap-2">
-                    <span className="text-gray-800 text-sm">{name}</span>
-                    <Badge color="green">{status}</Badge>
+        <div className="flex flex-col w-[90%]">
+            <div className="flex gap-2 w-full flex-wrap">
+                <div className="flex flex-col bg-black/10 py-0.5 px-2 rounded-lg max-w-full min-w-xs">
+                    <span className="text-gray-800 text-sm">{`${name} ${isAccount ? "(You)" : ''}`}</span>
+                    <p className="font-light text-ms wrap-break-word text-wrap">{text}</p>
                 </div>
-                <p className="font-light text-ms wrap-break-word">{text}</p>
+                {isAccount && <TrashIcon onClick={handleRemove} className="cursor-pointer hover:text-red-400 duration-150" width={16} />}
             </div>
-            <span className="font-light text-xs">{new Date(date).toLocaleDateString()}</span>
+            <div className="flex gap-3 font-light text-xs">
+                <span className="">{new Date(date).toLocaleDateString()}</span>
+                <div className="underline underline-offset-2">{status}</div>
+            </div>
         </div>
     </div>
 }

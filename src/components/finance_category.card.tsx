@@ -1,11 +1,7 @@
 import { Card, CardBody, CardHeader } from "@material-tailwind/react";
-import { NumericFormat } from "react-number-format";
 import Chart from "react-apexcharts";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { endpoints } from "@/services/api";
 
-export default function FinanceCategoryCard({data, categories}:{data:[], categories: []}) {
+export default function FinanceCategoryCard({data, categories}:{data:any[], categories:any[]}) {
     const chartConfig = {
         type: "bar",
         height: 240,

@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useFetch } from "../useFetch";
 
 interface IContext {
-    users: any, setUsers: any, technician: ITechnician[], setTechnician: any, salary: any, setSalary: any, timeReport: any, setTimeReport: any, finance: any, account: any, token: any
+    users: any, setUsers: any, technician: ITechnician[], setTechnician: any, salary: any, setSalary: any, timeReport: any, setTimeReport: any, finance: any, account: any, token: any, HCP_URL: string
 }
 
 const GlobalContext = createContext<IContext>({})
@@ -22,10 +22,23 @@ export default function GlobalProvider({ children }: { children: ReactNode }) {
     const [token, setToken] = useState<any>()
     useEffect(() => {
         const t = sessionStorage.getItem('token') || null
-        setToken(t)
         if (!t) {
             router.push('/login')
             return
+        }
+        try {
+            const payload = JSON.parse(atob(t.split('.')[1])); // Decode JWT payload
+            const expiry = payload.exp * 1000; // Convert to milliseconds
+            if (Date.now() > expiry) {
+                sessionStorage.removeItem('token')
+                router.push('/login')
+                return;
+            }
+            setToken(t)
+        } catch (error) {
+            console.error('Invalid token:', error);
+            router.push('/login')
+            return; // Treat malformed token as expired
         }
     }, [])
     return (
@@ -46,6 +59,8 @@ function useProviderData() {
     const [salary, setSalary] = useState<ISalary[]>([])
     const [timeReport, setTimeReport] = useState<ITimeReporting[]>([])
 
+    const HCP_URL = process.env.NEXT_PUBLIC_HCP;
+
     const loadData = async () => {
         const bearer = sessionStorage.getItem('token') || null
         if (!bearer) { return }
@@ -57,5 +72,5 @@ function useProviderData() {
         loadData()
     }, [])
 
-    return { users, setUsers, technician, setTechnician, salary, setSalary, timeReport, setTimeReport, account }
+    return { users, setUsers, technician, setTechnician, salary, setSalary, timeReport, setTimeReport, account, HCP_URL }
 }

@@ -10,7 +10,9 @@ export default function MainLayout({ children }: Readonly<{
     return <>
         <GlobalProvider>
             <HeaderComponent />
-            {children}
+            <div className="w-full border-0 p-0 mt-[64px]">
+                {children}
+            </div>
         </GlobalProvider>
     </>
 }

@@ -14,7 +14,7 @@ export default function OptionList({ selected, setSelected, list }: { selected: 
             /></ListboxButton>
         <ListboxOptions className={clsx(
             'w-(--button-width) rounded-xl border border-black/60 bg-black/60 text-white p-1 [--anchor-gap:--spacing(1)] focus:outline-none',
-            'transition duration-100 ease-in data-leave:data-closed:opacity-0'
+            'transition duration-100 ease-in data-leave:data-closed:opacity-0 z-20'
         )} anchor='bottom'>
             {list?.map((c: any) =>
                 <ListboxOption className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-black/10" key={c.id} value={c}>

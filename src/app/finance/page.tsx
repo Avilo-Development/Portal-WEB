@@ -19,6 +19,7 @@ export default function Finance() {
     const [groupedMonth, setGroupedMonth] = useState<any>()
     const [page, setPage] = useState(1)
     const [total, setTotal] = useState(10)
+    const [summary, setSummary] = useState<any>()
     //const [header, setHeader] = useState<any>([])
 
     const searchRef = useRef<any>(null)
@@ -26,7 +27,7 @@ export default function Finance() {
     useEffect(() => {
         const load = async () => {
             setFinance(await useFetch(endpoints.finance.getAll(`page=${page}&page_size=${total}`)))
-            setGroupedMonth(await useFetch(endpoints.finance.grouped(``)))
+            await handleYear(years[0])
         }
         load()
     }, [token])
@@ -42,11 +43,22 @@ export default function Finance() {
 
     const handleSearch = async (e: any) => {
         e.preventDefault()
+        const pattern = /https:\/\/pro\.housecallpro\.com\/app\/jobs\/(job_[a-zA-Z0-9_-]+)/g;
         const search = searchRef?.current?.value
+        const match = pattern.exec(search)
+        if(match){
+            const url = match[1]
+            localAdd(`${url}`)
+            return
+        }
         if (search === '') {
             setFinance(await useFetch(endpoints.finance.getAll(`page=${page}&page_size=${total}`)))
             return;
         }
+        localAdd(search)
+        
+    }
+    const localAdd = async (search:string) => {
         const rta = await useFetch(endpoints.finance.getOne(search))
         if (!rta) { return; }
         setFinance({ data: [rta], page: 1, page_size: 1, total_items: 1, total_pages: 1 })
@@ -57,14 +69,27 @@ export default function Finance() {
         { id: 'totalPaid', text: 'Paid' },
         { id: 'totalDue', text: 'Due' },
     ]
+    const years = [
+        { id: '2025-01-01', text: '2025' },
+        { id: '2024-01-01', text: '2024' },
+    ]
+    const [selectedYear, setSelectedYear] = useState(years[0])
+
+    const handleYear = async (e:any) => {
+        setSelectedYear(e)
+        setGroupedMonth(await useFetch(endpoints.finance.grouped(`date=${e.id}`)))
+        setSummary(await useFetch(endpoints.finance.summary('date=' + new Date(e.id).toLocaleDateString('en-CA'))))
+    }
 
     const [selectedCategory, setSelectedCategory] = useState(category[0])
     return <>
         {/* <Table data={finance} header={header}/> */}
         <div className="w-full gap-5 relative flex flex-col">
+            <h1 className="w-full text-center font-bold text-2xl">Dashboard</h1>
             <div className="flex gap-5 lg:flex-row flex-col">
                 <div className="sticky">
-                    <FinanceSummaryCard />
+                    <OptionList list={years} selected={selectedYear} setSelected={handleYear} />
+                    <FinanceSummaryCard finance={summary} />
                 </div>
                 <div className="flex flex-col rounded-xl bg-white  text-gray-800 shadow w-full p-4 gap-4">
                     <OptionList selected={selectedCategory} setSelected={setSelectedCategory} list={category} />
@@ -75,13 +100,13 @@ export default function Finance() {
                     <Pagination page={page} prev={handlePrev} next={handleNext} />
                 <div className="flex flex-col p-4 w-full rounded-lg gap-5">
                     <form onSubmit={handleSearch}>
-                        <Input type="text" ref={searchRef} className="p-2 w-full text-sm font-mono outline-0 duration-300 border-b-2 border-gray-700 focus:shadow bg-white" placeholder="(Job id, Job number): " />
+                        <Input type="text" ref={searchRef} className="p-2 w-full text-sm font-mono outline-0 duration-300 border-b-2 border-gray-700 focus:shadow bg-white" placeholder="(Job url, Job number): " />
                         <Button type="submit"></Button>
                     </form>
                 </div>
-                <div className="overflow-auto flex flex-col gap-5 w-full bg-gray-100">
+                <div className="overflow-auto flex flex-col gap-5 w-full bg-gray-100 lg:p-3 lg:rounded-lg">
                     {finance?.data?.map((value: any, id: any) =>
-                        <FinanceCard comments={value?.comments} job_id={value.job_id} id={value.id} job_date={value.job_date} job_number={value.job_number} invoice_date={value?.invoice_date} customer_id={value?.customer_id} amount={value?.amount} paid={value?.paid} due={value?.due} responsible={value?.responsible} key={value.id} />
+                        <FinanceCard project={value} />
                     )}
                 </div>
                 <Pagination page={page} prev={handlePrev} next={handleNext} />

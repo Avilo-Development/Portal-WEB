@@ -3,12 +3,6 @@ import { useData } from '@/hooks/contexts/global.context'
 import { Button, Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
-const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
 const navigation = [
   { name: 'Dashboard', href: '/', current: true },
   { name: 'Contacts', href: '/contacts', current: false },
@@ -32,20 +26,20 @@ export default function HeaderComponent() {
   }
 
   const userNavigation = [
-    { name: 'Your Profile', href: () => {}  },
+    { name: `${account?.name} (${account?.role})`, href: () => {} },
     { name: 'Settings', href: () => {} },
     { name: 'Sign out', href: logout },
   ]
 
   return (<>
 
-    {token && <Disclosure as="nav" className="bg-gray-900">
+    {token && <Disclosure as="nav" className="bg-gray-900 fixed z-10 w-full top-0 left-0">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <div className="shrink-0">
               <img
-                alt="Your Company"
+                alt="AVILO ARDAN ardan avilo electric services"
                 src="/avilo-bg-removed.png"
                 className="size-24 w-full"
               />
@@ -96,7 +90,7 @@ export default function HeaderComponent() {
                     <MenuItem key={item.name}>
                       <Button
                         onClick={item.href}
-                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                        className="block px-4 py-2 text-sm text-gray-700 w-full data-focus:bg-gray-100 data-focus:outline-hidden"
                       >
                         {item.name}
                       </Button>
@@ -106,7 +100,7 @@ export default function HeaderComponent() {
               </Menu>
             </div>
           </div>
-          <div className="-mr-2 flex md:hidden">
+          <div className="-mr-2 flex md:hidden w-fit">
             {/* Mobile menu button */}
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
               <span className="absolute -inset-0.5" />
@@ -138,7 +132,7 @@ export default function HeaderComponent() {
         <div className="border-t border-gray-700 pt-4 pb-3">
           <div className="flex items-center px-5">
             <div className="shrink-0">
-              <img alt="" src={user.imageUrl} className="size-10 rounded-full" />
+              <img alt="" src={account?.picture} className="size-10 rounded-full" />
             </div>
             <div className="ml-3">
               <div className="text-base/5 font-medium text-white">{account?.name}</div>
@@ -153,12 +147,12 @@ export default function HeaderComponent() {
               <BellIcon aria-hidden="true" className="size-6" />
             </button>
           </div>
-          <div className="mt-3 space-y-1 px-2">
+          <div className="mt-3 space-y-1 px-2 w-fit">
             {userNavigation.map((item) => (
               <DisclosureButton
                 key={item.name}
-                as="a"
-                href={item.href}
+                as="button"
+                onClick={item.href}
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
               >
                 {item.name}

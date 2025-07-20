@@ -21,5 +21,12 @@ async function usePatch(url:any, body:any){
 
     return await axios.patch(url, body, config)
 }
+async function useDelete(url:any){
+    const token = sessionStorage.getItem('token') || null
 
-export {useFetch, usePost, usePatch}
+    const config = { headers: { 'Authorization': 'Bearer ' + token } }
+
+    return await axios.delete(url, config)
+}
+
+export {useFetch, usePost, usePatch, useDelete}

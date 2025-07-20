@@ -24,45 +24,35 @@ export default function FinanceLayout({
             url: "/",
         },
         {
+            name: "Calendar",
+            url: "/calendar",
+        },
+        {
             name: "Category",
             childs: [
                 {
-                    name: "My assignments",
+                    name: "By Responsible",
+                    href: "/responsible",
+                    description: ""
+                },
+                {
+                    name: "By Customer",
                     href: "/customer",
                     description: ""
                 },
                 {
-                    name: "Invoice unsent",
-                    url: "/No Debt",
+                    name: "Invoice Status",
+                    href: "/invoice",
                     description: ""
                 },
                 {
-                    name: "Unpaid jobs",
-                    url: "/amount",
+                    name: "Past Due",
+                    href: "/pastdue",
                     description: ""
                 },
             ]
         },
-        {
-            name: "Past due",
-            childs: [
-                {
-                    name: "30 Days",
-                    href: "/customer",
-                    description: ""
-                },
-                {
-                    name: "90 Days",
-                    url: "/No Debt",
-                    description: ""
-                },
-                {
-                    name: "120+ Days",
-                    url: "/amount",
-                    description: ""
-                },
-            ]
-        },
+        
     ]
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -140,8 +130,8 @@ export default function FinanceLayout({
                             <span className="sr-only">Your Company</span>
                             <img
                                 alt=""
-                                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                                className="h-8 w-auto"
+                                src="/logo.png"
+                                className="h-20 w-auto rounded-full"
                             />
                         </a>
                         <button
