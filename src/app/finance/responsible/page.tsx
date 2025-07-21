@@ -4,6 +4,7 @@ import FinanceSummaryCard from "@/components/finace_summary.card";
 import FinanceTable from "@/components/finance.table";
 import FinanceCategoryCard from "@/components/finance_category.card";
 import OptionList from "@/components/OptionList";
+import SearchInput from "@/components/search.input";
 import { useData } from "@/hooks/contexts/global.context";
 import { useFetch } from "@/hooks/useFetch";
 import { endpoints } from "@/services/api";
@@ -47,7 +48,7 @@ export default function FinanceResponsible(){
     <div className="flex flex-col gap-5 w-full">
         <h1 className="w-full text-center font-bold text-2xl">By Responsible</h1>
         <div className="flex lg:justify-between lg:flex-row flex-col gap-10 p-3 bg-white rounded-lg">
-            <Input value={filter} onChange={handleFilter} type="text" className="p-2 w-full text-sm font-mono outline-0 duration-300 border-b-2 border-gray-700 focus:shadow bg-white" placeholder="(Job id, Job number): " />
+            <SearchInput setFilter={handleFilter} ref={null} />
             <OptionList list={users} selected={responsible} setSelected={handleChange} />
         </div>
         <div className="flex flex-col gap-5">

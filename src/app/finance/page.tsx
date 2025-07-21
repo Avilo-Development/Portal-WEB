@@ -10,6 +10,7 @@ import FinanceSummaryCard from "@/components/finace_summary.card";
 import FinanceCategoryCard from "@/components/finance_category.card";
 import OptionList from "@/components/OptionList";
 import { useFetch } from "@/hooks/useFetch";
+import SearchInput from "@/components/search.input";
 
 
 
@@ -100,7 +101,7 @@ export default function Finance() {
                     <Pagination page={page} prev={handlePrev} next={handleNext} />
                 <div className="flex flex-col p-4 w-full rounded-lg gap-5">
                     <form onSubmit={handleSearch}>
-                        <Input type="text" ref={searchRef} className="p-2 w-full text-sm font-mono outline-0 duration-300 border-b-2 border-gray-700 focus:shadow bg-white" placeholder="(Job url, Job number): " />
+                        <SearchInput ref={searchRef} />
                         <Button type="submit"></Button>
                     </form>
                 </div>

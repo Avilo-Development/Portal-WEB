@@ -5,11 +5,11 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 const navigation = [
   { name: 'Dashboard', href: '/', current: true },
-  { name: 'Contacts', href: '/contacts', current: false },
-  { name: 'Projects', href: '/projects', current: false },
+  // { name: 'Contacts', href: '/contacts', current: false },
+  // { name: 'Projects', href: '/projects', current: false },
   { name: 'Docs', href: '/docs', current: false },
-  { name: 'Salary', href: '/salary', current: false },
-  { name: 'Finance', href: '/finance', current: true },
+  // { name: 'Salary', href: '/salary', current: false },
+  { name: 'Finance', href: '/finance', current: false },
 ]
 
 function classNames(...classes: any) {
