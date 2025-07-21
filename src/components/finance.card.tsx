@@ -19,30 +19,18 @@ export default function FinanceCard({ project }: { project: any }) {
 
     const { account, users, HCP_URL } = useData()
 
-    const chartConfig = {
-        type: "pie",
-        width: 200,
-        height: 200,
-        series: [project?.paid || 0, project?.due],
-        options: {
-            chart: {
-                toolbar: {
-                    show: false,
-                },
-            },
-            title: {
-                show: "",
-            },
-            dataLabels: {
-                enabled: false,
-            },
-            labels: ["Paid", "Debt"],
-            colors: ["#00897b", "#CD2F2F"],
-            legend: {
+    const options = {
+        chart: {
+            toolbar: {
                 show: false,
             },
         },
-    };
+        dataLabels: {
+            enabled: false,
+        },
+        labels: ["Paid", "Debt"],
+        colors: ["#00897b", "#CD2F2F"],
+    }
 
     const handleReponsibleChange = async (e: any) => {
         const body = { responsible_id: e.id }
@@ -74,8 +62,8 @@ export default function FinanceCard({ project }: { project: any }) {
     return <div className="flex flex-col shadow-2xl bg-white text-gray-800 w-full grow lg:rounded-lg">
         <div className="flex gap-10 p-5 justify-center items-center ">
             <div className="flex w-full gap-3 lg:flex-row flex-col">
-                <Card className="bg-transparent shadow-none min-w-sm">
-                    <CardHeader color="transparent" className="p-2 flex flex-col gap-2 ">
+                <Card {...({} as React.ComponentProps<typeof Card>)} className="bg-transparent shadow-none min-w-sm">
+                    <CardHeader {...({} as React.ComponentProps<typeof Card>)} color="transparent" className="p-2 flex flex-col gap-2 ">
                         <div className="flex gap-3">
                             <a className="hover:underline underline-offset-2" href={`/finance/customer/${project?.customer?.id}`}>{project?.customer?.name}</a>
                             <Badge color="green">{<Link href={HCP_URL + "jobs/" + project?.job_id} >{project?.job_number}</Link>}</Badge>
@@ -85,10 +73,10 @@ export default function FinanceCard({ project }: { project: any }) {
                         <span className="text-sm font-light">{new Date(project?.job_date).toDateString()}</span>
                         <span className="text-sm font-light">{project?.invoice_date ? new Date(project?.invoice_date).toDateString() : "Invoice not sent"}</span>
                     </CardHeader>
-                    <CardBody className="grid place-items-center">
-                        {project?.amount ? <Chart {...chartConfig} /> : <div className="flex w-full items-center justify-center p-2"><span>Nothing to show here</span></div>}
+                    <CardBody {...({} as React.ComponentProps<typeof Card>)} className="grid place-items-center">
+                        {project?.amount ? <Chart type="pie" width={200} height={200} series={[project?.paid || 0, project?.due]} options={options} /> : <div className="flex w-full items-center justify-center p-2"><span>Nothing to show here</span></div>}
                     </CardBody>
-                    <CardFooter className="flex flex-col p-0 gap-1">
+                    <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col p-0 gap-1">
                         <div className="flex items-center gap-2">
                             <div className="rounded-full w-4 h-4 bg-[#020617]"></div>
                             <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={project?.amount} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>

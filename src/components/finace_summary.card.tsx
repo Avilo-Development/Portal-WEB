@@ -40,14 +40,14 @@ export default function FinanceSummaryCard({finance}:{finance:any}) {
 
     return <div className="flex flex-col rounded-xl bg-white  text-gray-800 shadow w-fit">
         <div className="flex gap-10 p-5 justify-between items-center">
-            {finance?.totalAmount ? <Card className="bg-transparent shadow-none">
-                <CardHeader color="transparent" className="p-2 flex flex-col gap-2 justify-center items-center">
+            {finance?.totalAmount ? <Card className="bg-transparent shadow-none" {...({} as React.ComponentProps<typeof Card>)}>
+                <CardHeader {...({} as React.ComponentProps<typeof Card>)} color="transparent" className="p-2 flex flex-col gap-2 justify-center items-center">
                     <span className="hover:underline underline-offset-2" >Summary</span>
                 </CardHeader>
-                <CardBody className="mt-4 grid place-items-center px-2">
+                <CardBody {...({} as React.ComponentProps<typeof Card>)} className="mt-4 grid place-items-center px-2">
                     <Chart {...chartConfig} />
                 </CardBody>
-                <CardFooter className="flex flex-col">
+                <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <div className="rounded-full w-4 h-4 bg-[#020617]"></div>
                         <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={parseInt(finance?.totalAmount)} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>

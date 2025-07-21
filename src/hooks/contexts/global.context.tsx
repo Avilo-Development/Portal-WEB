@@ -14,7 +14,7 @@ interface IContext {
     users: any, setUsers: any, technician: ITechnician[], setTechnician: any, salary: any, setSalary: any, timeReport: any, setTimeReport: any, finance: any, account: any, setAccount: any, token: any, setToken: any, HCP_URL: string
 }
 
-const GlobalContext = createContext<IContext>({})
+const GlobalContext = createContext<any>({})
 
 export default function GlobalProvider({ children }: { children: ReactNode }) {
     const data = useProviderData()

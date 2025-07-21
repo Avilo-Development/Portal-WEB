@@ -24,7 +24,7 @@ export default function AddSalary({ open, handleOpen, active = {}, setActive = [
     }
 
     function handleAdd() {
-        const tec = technician.find(e => e.id === selectedTech)
+        const tec = technician.find((e:any) => e.id === selectedTech)
         setTimeReport((oldData: any) => [...oldData, [
             startDate,
             tec?.user_id.id,
@@ -75,7 +75,7 @@ export default function AddSalary({ open, handleOpen, active = {}, setActive = [
                                 </button>
                             </div>
                         </div>
-                        <Table data={timeReport} setData={setTimeReport} header={["Date", "Technician", "Time", "Salary"]} setSum={setSum} />
+                        {/* <Table data={timeReport} setData={setTimeReport} header={["Date", "Technician", "Time", "Salary"]} setSum={setSum} /> */}
                         <div>
                             <span>Gross Total: {<NumberFormatBase value={sum} displayType="text" prefix="$" />}</span>
                         </div>

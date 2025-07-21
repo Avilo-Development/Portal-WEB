@@ -1,7 +1,10 @@
-import CustomerCard from "@/components/customer.card"
-import { useFetch } from "@/hooks/useFetch"
-import CustomerLayout from "@/layouts/customer.layout"
-import { endpoints } from "@/services/api"
+"use client"
+
+import dynamic from "next/dynamic";
+
+const CustomerLayout = dynamic(() => import('@/layouts/customer.layout'), {
+  ssr: false,
+});
 
 export default async function Page({params}: {params:Promise<{id:string}>}){
     const {id} = await params
