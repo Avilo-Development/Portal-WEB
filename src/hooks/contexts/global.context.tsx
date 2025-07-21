@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useFetch } from "../useFetch";
 
 interface IContext {
-    users: any, setUsers: any, technician: ITechnician[], setTechnician: any, salary: any, setSalary: any, timeReport: any, setTimeReport: any, finance: any, account: any, token: any, HCP_URL: string
+    users: any, setUsers: any, technician: ITechnician[], setTechnician: any, salary: any, setSalary: any, timeReport: any, setTimeReport: any, finance: any, account: any, setAccount: any, token: any, setToken: any, HCP_URL: string
 }
 
 const GlobalContext = createContext<IContext>({})
@@ -42,7 +42,7 @@ export default function GlobalProvider({ children }: { children: ReactNode }) {
         }
     }, [])
     return (
-        <GlobalContext value={{ ...data, token }}>
+        <GlobalContext value={{ ...data, token, setToken }}>
             {children}
         </GlobalContext>
     )
@@ -72,5 +72,5 @@ function useProviderData() {
         loadData()
     }, [])
 
-    return { users, setUsers, technician, setTechnician, salary, setSalary, timeReport, setTimeReport, account, HCP_URL }
+    return { users, setUsers, technician, setTechnician, salary, setSalary, timeReport, setTimeReport, account, HCP_URL, setAccount }
 }

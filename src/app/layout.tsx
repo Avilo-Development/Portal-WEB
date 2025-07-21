@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import MainLayout from "@/components/main.layout";
+import MainLayout from "@/layouts/main.layout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

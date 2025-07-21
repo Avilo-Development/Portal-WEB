@@ -74,10 +74,10 @@ export default function FinanceCard({ project }: { project: any }) {
     return <div className="flex flex-col shadow-2xl bg-white text-gray-800 w-full grow lg:rounded-lg">
         <div className="flex gap-10 p-5 justify-center items-center ">
             <div className="flex w-full gap-3 lg:flex-row flex-col">
-                {project?.amount ? <Card className="bg-transparent shadow-none">
+                <Card className="bg-transparent shadow-none min-w-sm">
                     <CardHeader color="transparent" className="p-2 flex flex-col gap-2 ">
                         <div className="flex gap-3">
-                            <a className="hover:underline underline-offset-2" href={`/finance/customer/${project?.id}`}>{project?.customer?.name}</a>
+                            <a className="hover:underline underline-offset-2" href={`/finance/customer/${project?.customer?.id}`}>{project?.customer?.name}</a>
                             <Badge color="green">{<Link href={HCP_URL + "jobs/" + project?.job_id} >{project?.job_number}</Link>}</Badge>
                         </div>
                         <OptionList selected={responsibleSelected} setSelected={handleReponsibleChange} list={users} />
@@ -86,7 +86,7 @@ export default function FinanceCard({ project }: { project: any }) {
                         <span className="text-sm font-light">{project?.invoice_date ? new Date(project?.invoice_date).toDateString() : "Invoice not sent"}</span>
                     </CardHeader>
                     <CardBody className="grid place-items-center">
-                        <Chart {...chartConfig} />
+                        {project?.amount ? <Chart {...chartConfig} /> : <div className="flex w-full items-center justify-center p-2"><span>Nothing to show here</span></div>}
                     </CardBody>
                     <CardFooter className="flex flex-col p-0 gap-1">
                         <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ export default function FinanceCard({ project }: { project: any }) {
                             <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={project?.due} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
                         </div>
                     </CardFooter>
-                </Card> : <div className="flex w-full items-center justify-center p-2"><span>Nothing to show here</span></div>}
+                </Card>
                 <div className="flex flex-col p-2 lg:border-l mt-3 overflow-auto w-full">
                     <div className="flex flex-col gap-2 p-2 max-h-[450px] overflow-auto">
                         <span className="font-light text-sm">Comments</span>

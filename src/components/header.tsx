@@ -17,9 +17,7 @@ function classNames(...classes: any) {
 }
 
 export default function HeaderComponent() {
-  const { token } = useData()
-  const { account } = useData()
-  
+  const { token, account } = useData()  
   const logout = () => {
     sessionStorage.removeItem('token')
     window.location.reload()
@@ -32,7 +30,6 @@ export default function HeaderComponent() {
   ]
 
   return (<>
-
     {token && <Disclosure as="nav" className="bg-gray-900 fixed z-10 w-full top-0 left-0">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">

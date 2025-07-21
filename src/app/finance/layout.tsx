@@ -14,10 +14,6 @@ export default function FinanceLayout({
     const [open, setOpen] = useState(false)
     const current_path = 'finance'
 
-    function handleOpen() {
-        setOpen(!open)
-    }
-
     const routes = [
         {
             name: "Dashboard",
@@ -43,11 +39,6 @@ export default function FinanceLayout({
                 {
                     name: "Invoice Status",
                     href: "/invoice",
-                    description: ""
-                },
-                {
-                    name: "Past Due",
-                    href: "/pastdue",
                     description: ""
                 },
             ]

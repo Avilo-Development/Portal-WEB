@@ -6,13 +6,13 @@ import { useData } from "@/hooks/contexts/global.context";
 import { NumericFormat, PatternFormat } from "react-number-format";
 import ErrorDialog from "@/dialogs/error.dialog";
 
-export default function CustomerCard({customer}: {customer:any}) {
+export default function CustomerCard({customer, finances}: {customer:any, finances:any}) {
     const { HCP_URL } = useData()
     const chartConfig = {
         type: "pie",
         width: 200,
         height: 200,
-        series: [parseInt(customer?.finances[0]?.totalPaid) || 0, parseInt(customer?.finances[0]?.totalDue)],
+        series: [parseInt(finances?.totalPaid) || 0, parseInt(finances?.totalDue)],
         options: {
             chart: {
                 toolbar: {
@@ -36,29 +36,29 @@ export default function CustomerCard({customer}: {customer:any}) {
         <CardHeader color="transparent" className="p-2 flex flex-col gap-2 ">
             <div className="flex gap-3">
                 <a className="hover:underline underline-offset-2" href={`/finance/customer/${customer?.id}`}>{customer?.name}</a>
-                <Badge color="green">{<Link href={HCP_URL + "customers/" + customer?.id} >Total: {customer?.finances[0]?.totalItems || 0}</Link>}</Badge>
+                <Badge color="green">{<Link href={HCP_URL + "customers/" + customer?.id} >Total: {finances?.totalItems || customer?.finances?.length || 0}</Link>}</Badge>
             </div>
             {/* <OptionList selected={responsibleSelected} setSelected={handleReponsibleChange} list={users} /> */}
             <hr className="text-white" />
             <span className="text-sm font-light">{new Date(customer?.createdAt).toDateString()}</span>
-            <a href={"mailto:"+customer.email} className="text-sm font-light hover:underline underline-offset-3">{customer.email}</a>
-            <a href={"tel:+"+customer.phone} className="text-sm font-light hover:underline underline-offset-3"><PatternFormat format="(###) ###-####" displayType="text" value={customer.phone} /></a>
+            <a href={"mailto:"+customer?.email} className="text-sm font-light hover:underline underline-offset-3">{customer?.email}</a>
+            <a href={"tel:+"+customer?.phone} className="text-sm font-light hover:underline underline-offset-3"><PatternFormat format="(###) ###-####" displayType="text" value={customer?.phone} /></a>
         </CardHeader>
         <CardBody className="grid place-items-center">
-            {customer?.finances[0]?.totalAmount > 0 ? <Chart {...chartConfig} /> : <ErrorDialog />}
+            {finances?.totalAmount > 0 ? <Chart {...chartConfig} /> : <ErrorDialog />}
         </CardBody>
         <CardFooter className="flex flex-col p-0 gap-1">
             <div className="flex items-center gap-2">
                 <div className="rounded-full w-4 h-4 bg-[#020617]"></div>
-                <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={customer.finances[0]?.totalAmount} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
+                <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={finances?.totalAmount} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
             </div>
             <div className="flex items-center gap-2">
                 <div className="rounded-full w-4 h-4 bg-[#00897b]"></div>
-                <div className="flex gap-1"><span>Paid:</span> <NumericFormat value={customer.finances[0]?.totalPaid || 0} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
+                <div className="flex gap-1"><span>Paid:</span> <NumericFormat value={finances?.totalPaid || 0} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
             </div>
             <div className="flex items-center gap-2">
                 <div className="rounded-full w-4 h-4 bg-[#CD2F2F]"></div>
-                <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={customer.finances[0]?.totalDue} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
+                <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={finances?.totalDue} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
             </div>
         </CardFooter>
     </Card>

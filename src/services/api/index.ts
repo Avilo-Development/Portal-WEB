@@ -21,8 +21,14 @@ export const endpoints = {
         remove: (id: string) => `${url}/comment/${id}`
     },
     customer: {
-        getAll: `${url}/customer`,
+        getAll: (params:string) => `${url}/customer?${params}`,
+        getOne: (id:string) => `${url}/customer/${id}`,
+        getBy: (id:string) => `${url}/customer/by/${id}`,
+        summary: (id:string) => `${url}/customer/total/${id}`,
         patch: (id: string) => `${url}/customer/${id}`,
         remove: (id: string) => `${url}/customer/${id}`
     },
+    hcp: {
+        employees: `${url}/housecalpro/employees`
+    }
 }
