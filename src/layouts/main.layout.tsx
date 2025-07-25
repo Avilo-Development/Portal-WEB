@@ -1,8 +1,12 @@
 'use client'
 
 import { ReactFlowProvider } from "@xyflow/react";
-import HeaderComponent from "../components/header";
 import GlobalProvider from "@/hooks/contexts/global.context";
+import dynamic from "next/dynamic";
+
+const Header = dynamic(() => import('@/components/header'), {
+  ssr: false,
+});
 
 export default function MainLayout({ children }: Readonly<{
     children: React.ReactNode;
@@ -11,7 +15,7 @@ export default function MainLayout({ children }: Readonly<{
     return <>
         <GlobalProvider>
             <ReactFlowProvider>
-                <HeaderComponent />
+                <Header />
                 <div className="w-full border-0 p-0 mt-[64px] ">
                     {children}
                 </div>

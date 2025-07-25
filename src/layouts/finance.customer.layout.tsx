@@ -85,7 +85,7 @@ export default function FinanceCustomerLayout() {
         }
     }
     return <div className="flex gap-3 flex-col">
-        <Pagination next={() => handleStep(page + 1)} prev={() => handleStep(page - 1)} page={page} />
+        <Pagination next={() => handleStep(page + 1)} total={customers.length} prev={() => handleStep(page - 1)} page={page} />
         <div className="flex flex-col p-4 w-full rounded-lg gap-5">
             <form onSubmit={handleSearch} className="flex gap-1">
                 <SearchInput placeholder="(Customer id, name): " ref={searchRef} />
