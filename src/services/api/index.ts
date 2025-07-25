@@ -3,14 +3,16 @@ export const endpoints = {
     user: {
         create: `${url}/user`,
         account: `${url}/user/account`,
-        login: url+'/user/login'
+        login: url+'/user/login',
+        verify: url+'/user/verify'
     },
     finance: {
-        getAll: (props:string) => `${url}/finance?${props}`,
+        getAll: (props='') => `${url}/finance?${props}`,
         getOne: (id:string) => `${url}/finance/${id}`,
+        getBy: (id:string) => `${url}/finance/by/${id}`,
         customers: (props:string) => `${url}/finance/customers?${props}`,
-        responsible: (id:string) => `${url}/finance/responsible/${id}`,
-        invoice: (active:boolean) => `${url}/finance/invoice/${active}`,
+        responsible: (id:string, props:string) => `${url}/finance/responsible/${id}?${props}`,
+        invoice: (status:number) => `${url}/finance/invoice/${status}`,
         summary: (query:string) =>`${url}/finance/summary?${query}`,
         grouped: (props:string) => `${url}/finance/grouped?${props}`,
         update: (id:string) => `${url}/finance/${id}`,
@@ -27,6 +29,10 @@ export const endpoints = {
         summary: (id:string) => `${url}/customer/total/${id}`,
         patch: (id: string) => `${url}/customer/${id}`,
         remove: (id: string) => `${url}/customer/${id}`
+    },
+    notification: {
+        getUnseen: `${url}/notification/`,
+        see: (id:string) => `${url}/notification/${id}`,
     },
     hcp: {
         employees: `${url}/housecalpro/employees`

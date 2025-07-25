@@ -4,8 +4,7 @@ import { useEffect, useState } from "react"
 
 export default function FinanceTable({ data }: { data: any}) {
     const [open, setOpen] = useState(false)
-    const [project, setProject] = useState(null)
-    const [activeId, setActiveId] = useState(null);
+    const [project, setProject] = useState('')
 
     const [values, setValues] = useState<any>([])
 
@@ -49,15 +48,15 @@ export default function FinanceTable({ data }: { data: any}) {
                         Comments
                     </th>
                     <th className="px-6 py-3">
-                        Created At
+                        Address
                     </th>
                 </tr>
             </thead>
             <tbody>
                 {
                     values?.length > 0 && values?.map((item: any, itemId: any) => (
-                        <tr onClick={() => {setActiveId(item.id); setProject(item)}}
-                            className={`cursor-pointer border-b dark:border-gray-700 border-gray-200  ${activeId === item.id
+                        <tr onClick={() => {setProject(item.id)}}
+                            className={`cursor-pointer border-b dark:border-gray-700 border-gray-200  ${project === item.id
                                     ? 'bg-gray-700 text-blue-800 font-medium'
                                     : 'bg-gray-800'
                                 }`} onDoubleClick={handleOpen} key={itemId}>
@@ -86,13 +85,13 @@ export default function FinanceTable({ data }: { data: any}) {
                                 {item?.comments?.length}
                             </td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {new Date(item?.createdAt).toLocaleDateString()}
+                                {item?.address}
                             </td>
                         </tr>
                     ))
                 }
             </tbody>
         </table>
-        <FinanceDialog handleOpen={() => { setOpen(!open) }} open={open} project={project}  />
+        <FinanceDialog handleOpen={() => { setOpen(!open) }} open={open} project_id={project}  />
     </div>
 }

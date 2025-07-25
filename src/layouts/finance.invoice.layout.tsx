@@ -4,37 +4,43 @@ import FinanceSummaryCard from "@/components/finace_summary.card";
 import FinanceTable from "@/components/finance.table";
 import FinanceCategoryCard from "@/components/finance_category.card";
 import OptionList from "@/components/OptionList";
+import Pagination from "@/components/pagination";
+import SearchInput from "@/components/search.input";
 import { useData } from "@/hooks/contexts/global.context";
 import { useFetch } from "@/hooks/useFetch";
 import { endpoints } from "@/services/api";
 import { Input } from "@headlessui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function FinanceInvoice(){
     const [data, setData] = useState<any>({})
     const [filterData, setFilterData] = useState(data)
-    const [filter, setFilter] = useState('')
+    const [page, setPage] = useState(0)
     const {account} = useData()
     const [totals, setTotals] = useState<any>({})
     const [values, setValues] = useState<any>({})
+    const [loading, setLoading] = useState<any>(true)
     
     const categories = ['Amount', 'Paid', 'Debt']
-    const load = async (status:boolean) => {
-        const rta = await useFetch(endpoints.finance.invoice(status))
-        setData(rta?.data)
-        setFilterData(rta.data)
-        setTotals(Object.values(rta['0']))
-        setValues(rta['0'])
+    const load = async (status:number) => {
+        setLoading(true)
+        setPage(0)
+        try {
+            const rta = await useFetch(endpoints.finance.invoice(status))
+            const chunked = chunkArray(rta?.data)
+            setData(chunked)
+            setFilterData(chunked)
+            setTotals(Object.values(rta['0']))
+            setValues(rta['0'])
+        } catch (e) {
+            console.error("Error loading finance data:", e)
+        } finally {
+            setLoading(false)
+        }
     }
     useEffect(() => {
-        load(false)
+        load(0)
     }, [account])
-    
-    const handleFilter = (e:any) => {
-        const value = e.target.value
-        setFilter(value)
-        setFilterData(data?.filter((d:any) => d.job_number.includes(value)))
-    }
     
     const handleChange = async (e:any) => {
         setStatus(e)
@@ -42,16 +48,50 @@ export default function FinanceInvoice(){
     }
     
     const statusList = [
-        {id: false, name: "Unsent"},
-        {id: true, name: "Sent"},
+        {id: 0, name: "Paid"},
+        {id: 1, name: "Unpaid"},
+        {id: -1, name: "Unsent"},
+        {id: 2, name: "Recents"},
+        {id: 30, name: "Overdue 30+"},
+        {id: 60, name: "Overdue 60+"},
+        {id: 90, name: "Overdue 90+"},
     ]
     const [status, setStatus] = useState<any>(statusList[0])
+
+    const handleFilter = (e: any) => {
+        const value = e.target.value
+        if (value === '') {
+            setFilterData(data)
+            setPage(0)
+            return
+        }
+        setFilterData([data.flat().filter((obj: any) => obj?.job_number?.includes(value) || obj?.address?.toLowerCase().includes(value.toLowerCase()) || obj?.job_id?.includes(value))]);
+        setPage(0)
+        //setFilterData(data?.filter((d: any) => d.job_number.includes(value)))
+    }
+    function chunkArray<T>(array: T[], chunkSize = 20): T[][] {
+        const result = [];
+        for (let i = 0; i < array.length; i += chunkSize) {
+            result.push(array.slice(i, i + chunkSize));
+        }
+        return result;
+    }
+    const handleNext = () => {
+        if (page < data.length - 1) {
+            setPage(page + 1);
+        }
+    }
+    const handlePrev = () => {
+        if (page > 0) {
+            setPage(page - 1);
+        }
+    }
 
     return <>
     <div className="flex flex-col gap-5 w-full">
         <h1 className="w-full text-center font-bold text-2xl">By Invoice status</h1>
         <div className="flex lg:justify-between lg:flex-row flex-col gap-10 p-3 bg-white rounded-lg">
-            <Input value={filter} onChange={handleFilter} type="text" className="p-2 w-full text-sm font-mono outline-0 duration-300 border-b-2 border-gray-700 focus:shadow bg-white" placeholder="(Job id, Job number): " />
+            <SearchInput placeholder="(Job id, Job number, Address)" ref={null} setFilter={handleFilter} />
             <OptionList list={statusList} selected={status} setSelected={handleChange} />
         </div>
         <div className="flex flex-col gap-5">
@@ -61,7 +101,8 @@ export default function FinanceInvoice(){
                     <FinanceCategoryCard categories={categories} data={totals} />
                 </div>
             </div>
-            <FinanceTable data={filterData} />
+            <Pagination next={handleNext} prev={handlePrev} page={page} total={filterData.length} />
+            <FinanceTable data={filterData[page]} />
         </div>
     </div>
     </>

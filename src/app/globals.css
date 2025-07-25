@@ -47,3 +47,34 @@ body {
   font-size: 1em;
   line-height: 1.6;
 }
+
+.event{
+  padding: 10px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.event-default{
+  background: #4CAF50;
+  color: white;
+}
+.event-unsent{
+  background: #464646;
+  color: white;
+}
+.event-29{
+  background: rgb(157, 255, 0);
+  color: black;
+}
+.event-30{
+  background: #fffb00;
+  color: black;
+}
+.event-60{
+  background: #e48408;
+  color: black;
+}
+.event-90{
+  background: #db0707;
+  color: white;
+}

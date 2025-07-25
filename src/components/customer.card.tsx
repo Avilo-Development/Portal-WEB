@@ -38,15 +38,15 @@ export default function CustomerCard({ customer, finances }: { customer: any, fi
         <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col p-0 gap-1">
             <div className="flex items-center gap-2">
                 <div className="rounded-full w-4 h-4 bg-[#020617]"></div>
-                <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={finances?.totalAmount} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
+                <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={finances?.totalAmount} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
             </div>
             <div className="flex items-center gap-2">
                 <div className="rounded-full w-4 h-4 bg-[#00897b]"></div>
-                <div className="flex gap-1"><span>Paid:</span> <NumericFormat value={finances?.totalPaid || 0} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
+                <div className="flex gap-1"><span>Paid:</span> <NumericFormat value={finances?.totalPaid || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
             </div>
             <div className="flex items-center gap-2">
                 <div className="rounded-full w-4 h-4 bg-[#CD2F2F]"></div>
-                <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={finances?.totalDue} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
+                <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={finances?.totalDue} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
             </div>
         </CardFooter>
     </Card>

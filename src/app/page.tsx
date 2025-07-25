@@ -11,7 +11,7 @@ import { NumericFormat } from "react-number-format";
 export default function Home() {
 
   const [finance, setFinance] = useState<any>([]);
-  const [percent, setPercent] = useState(0)
+  const [paid, setPaid] = useState(0)
   const [unpaid, setUnpaid] = useState(0)
 
   useEffect(() => {
@@ -19,8 +19,8 @@ export default function Home() {
       // Assuming you have a function to fetch finance data
       const financeData = await useFetch(endpoints.finance.summary('date=' + new Date('2025-01-01').toLocaleDateString('en-CA')));
       setFinance(financeData);
-      setPercent((parseInt(financeData?.totalPaid) / parseInt(financeData?.totalAmount)) * 100)
-      setUnpaid((parseInt(financeData?.totalDue) / parseInt(financeData?.totalAmount)) * 100)
+      setPaid((parseInt(financeData?.totalPaid)))
+      setUnpaid((parseInt(financeData?.totalDue)/1000))
     };
     load();
   }, []);
@@ -46,10 +46,10 @@ export default function Home() {
                   <NumericFormat className="text-6xl font-semibold w-44 cursor-pointer" value={parseInt(finance?.totalAmount) / 1000000} allowLeadingZeros thousandSeparator="," prefix="$" suffix="M" decimalScale={1} />
                   <p className="font-semibold">Revenue this FY</p>
                 </div>
-                <ProgressBar value={percent} />
+                <ProgressBar value={((paid/parseInt(finance?.totalAmount))*100)} />
                 <div className="flex justify-between ">
-                  <span><NumericFormat className="max-w-25 cursor-pointer" value={percent} decimalScale={1} allowLeadingZeros suffix="% Paid" /></span>
-                  <span><NumericFormat className="max-w-25 cursor-pointer" value={unpaid} decimalScale={1} allowLeadingZeros suffix="% Unpaid" /></span>
+                  <span><NumericFormat className="max-w-32 cursor-pointer" value={paid/100} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Paid" /></span>
+                  <span><NumericFormat className="max-w-30 cursor-pointer" value={unpaid} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Unpaid" /></span>
                 </div>
               </div>
             </DashboardCard>

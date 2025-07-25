@@ -1,6 +1,5 @@
-'use client'
-
 import CustomerCard from "@/components/customer.card";
+import Loader from "@/components/loader";
 import Pagination from "@/components/pagination";
 import SearchInput from "@/components/search.input";
 import { useData } from "@/hooks/contexts/global.context";
@@ -14,6 +13,7 @@ export default function FinanceCustomerLayout() {
     const searchParams = useSearchParams();
     const { token } = useData()
     const [customers, setCustomers] = useState<any>([])
+    const [loading, setLoading] = useState<any>(true)
 
     const [page, setPage] = useState(1)
     const [total, setTotal] = useState(10)
@@ -22,13 +22,19 @@ export default function FinanceCustomerLayout() {
 
     useEffect(() => {
         const search = searchParams.get('search')
-        if(search){
+        if (search) {
             localAdd(search)
             return
         }
         const load = async () => {
-            const response = await useFetch(endpoints.customer.getAll(`page=${page}&page_size=${total}`))
-            setCustomers(response?.data)
+            try {
+                const response = await useFetch(endpoints.customer.getAll(`page=${page}&page_size=${total}`))
+                setCustomers(response?.data)
+            } catch (err) {
+                console.error("Error loading customers:", err);
+            } finally {
+                setLoading(false)
+            }
         }
         load()
 
@@ -52,32 +58,49 @@ export default function FinanceCustomerLayout() {
 
     }
     const localAdd = async (search: string) => {
-        const rta = await useFetch(endpoints.customer.getBy(search))
-        if (!rta) { return; }
-        setCustomers(rta)
+        setLoading(true)
+        try {
+            const rta = await useFetch(endpoints.customer.getBy(search))
+            if (!rta) { return; }
+            setCustomers(rta)
+        } catch (err) {
+            console.error("Error searching customers:", err);
+        } finally {
+            setLoading(false)
+        }
     }
-    const handleNext = async () => {
-        const rta = await useFetch(endpoints.customer.getAll(`page=${page + 1}&page_size=${total}`))
-        setCustomers(rta?.data)
-        setPage(page + 1)
-    }
-    const handlePrev = async () => {
-        const rta = await useFetch(endpoints.customer.getAll(`page=${page - 1}&page_size=${total}`))
-        setCustomers(rta?.data)
-        setPage(page - 1)
+    const handleStep = async (value: number) => {
+        setLoading(true)
+        if (value < 1) {
+            value = 1
+        }
+        try {
+            const rta = await useFetch(endpoints.customer.getAll(`page=${value}&page_size=${total}`))
+            setCustomers(rta?.data)
+            setPage(value)
+        } catch (e) {
+            console.error("Error loading next page of customers:", e);
+        } finally {
+            setLoading(false)
+        }
     }
     return <div className="flex gap-3 flex-col">
-        <Pagination next={handleNext} prev={handlePrev} page={page} />
+        <Pagination next={() => handleStep(page + 1)} prev={() => handleStep(page - 1)} page={page} />
         <div className="flex flex-col p-4 w-full rounded-lg gap-5">
             <form onSubmit={handleSearch} className="flex gap-1">
-                <SearchInput ref={searchRef} />
+                <SearchInput placeholder="(Customer id, name): " ref={searchRef} />
                 <Button type="submit"></Button>
             </form>
         </div>
         {
-            customers?.map((customer: any, id: number) =>
-                <CustomerCard customer={customer} finances={customer?.finances[0]} key={id} />
+            !loading ? customers?.map((customer: any, id: number) =>
+                <CustomerCard customer={customer} finances={customer?.finances} key={id} />
             )
+                :
+                <div className="flex flex-col items-center justify-center gap-2 p-5">
+                    <Loader loading size={20} />
+                    <span>Loading customers...</span>
+                </div>
         }
     </div>
 }

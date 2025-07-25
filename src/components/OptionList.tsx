@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 
-export default function OptionList({ selected, setSelected, list }: { selected: any, setSelected: any, list: any[] }) {
+export default function OptionList({ selected, setSelected, list }: { selected: any, setSelected: any, list: any }) {
     return <Listbox value={selected} onChange={setSelected}>
         <ListboxButton className={clsx(
             'relative block w-full rounded-lg bg-black/5 py-1.5 pr-8 pl-3 text-left text-sm/6 text-black',

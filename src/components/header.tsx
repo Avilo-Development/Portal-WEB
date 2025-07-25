@@ -1,7 +1,11 @@
 "use client"
+import FinanceDialog from '@/dialogs/finance.dialog'
 import { useData } from '@/hooks/contexts/global.context'
+import { useFetch, usePatch } from '@/hooks/useFetch'
+import { endpoints } from '@/services/api'
 import { Button, Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useEffect, useState } from 'react'
 
 const navigation = [
   { name: 'Dashboard', href: '/', current: true },
@@ -17,17 +21,36 @@ function classNames(...classes: any) {
 }
 
 export default function HeaderComponent() {
-  const { token, account } = useData()  
+  const { token, account } = useData()
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [finance, setFinance] = useState<string>('')
+  const [open, setOpen] = useState<any>(false)
   const logout = () => {
     sessionStorage.removeItem('token')
     window.location.reload()
   }
 
   const userNavigation = [
-    { name: `${account?.name} (${account?.role})`, href: () => {} },
-    { name: 'Settings', href: () => {} },
+    { name: `${account?.name} (${account?.role})`, href: () => { } },
+    { name: 'Settings', href: () => { } },
     { name: 'Sign out', href: logout },
   ]
+
+  useEffect(() => {
+    if (!token) return
+    const load = async () => {
+      const rta = await useFetch(endpoints.notification.getUnseen)
+      setNotifications(rta)
+    }
+    load()
+  }, [token])
+
+  const handleOpen = async (id:string, _nid:string) => {
+    setFinance(id)
+    setNotifications(notifications.filter((n) => n.id !== _nid))
+    await usePatch(endpoints.notification.see(_nid), {})
+    setOpen(true)
+  }
 
   return (<>
     {token && <Disclosure as="nav" className="bg-gray-900 fixed z-10 w-full top-0 left-0">
@@ -61,14 +84,46 @@ export default function HeaderComponent() {
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
-              <button
-                type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <BellIcon aria-hidden="true" className="size-6" />
-              </button>
+              <Menu as="div" className="relative ml-3">
+                <div>
+                  <MenuButton className="relative z-10 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open Notifications</span>
+                    <BellIcon aria-hidden="true" className="size-6" />
+                    {notifications.length > 0 && <span className='w-4 rounded-full h-4 bg-red-500 absolute top-0 right-0 text-white font-extralight text-xs text-center'>{notifications.length}</span>}
+                  </MenuButton>
+                </div>
+                <MenuItems
+                  transition
+                  className="absolute right-0 z-10 mt-2 w-60 h-fit origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                >
+                  {
+                    notifications.length > 0 ? notifications.map((notification) => (
+                      <MenuItem>
+                        <Button
+                          onClick={() => handleOpen(notification?.notification?.comment?.finance?.id, notification?.id)}
+                          className="flex flex-col gap-3 text-left px-4 py-2 text-sm text-gray-700 w-full data-focus:bg-gray-100 data-focus:outline-hidden"
+                        >
+                          <div className='flex gap-2 items-center'>
+                            <img src={notification?.notification?.comment?.user?.picture} alt="" />
+                            <span className="font-bold">{notification?.notification?.comment?.user?.name}</span>
+                          </div>
+                          <div className='flex flex-col gap-1'>
+                            <span>{`${notification?.notification?.message} > Job #${notification?.notification?.comment?.finance?.job_number}`}</span>
+                          </div>
+                        </Button>
+                      </MenuItem>
+                    ))
+                    :
+                    <MenuItem>
+                      <div className='p-2 font-bold text-sm gap-2 text-gray-500 flex flex-col items-center justify-center'>
+                        <CheckCircleIcon className='w-12' />
+                        <span>Nothing to show here.</span>
+                      </div>
+                    </MenuItem>
+                  }
+                </MenuItems>
+              </Menu>
 
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
@@ -158,6 +213,7 @@ export default function HeaderComponent() {
           </div>
         </div>
       </DisclosurePanel>
+      <FinanceDialog handleOpen={()=>setOpen(!open)} open={open} project_id={finance}  />
     </Disclosure>}
 
   </>)

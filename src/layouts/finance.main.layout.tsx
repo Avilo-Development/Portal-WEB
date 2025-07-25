@@ -5,63 +5,23 @@ import Pagination from "@/components/pagination";
 import { useData } from "@/hooks/contexts/global.context";
 import { useEffect, useRef, useState } from "react";
 import { endpoints } from "@/services/api";
-import { Button, Input } from "@headlessui/react";
 import FinanceSummaryCard from "@/components/finace_summary.card";
 import FinanceCategoryCard from "@/components/finance_category.card";
 import OptionList from "@/components/OptionList";
 import { useFetch } from "@/hooks/useFetch";
 import SearchInput from "@/components/search.input";
+import Loader from "@/components/loader";
 
 export default function FinanceMainLayout() {
     const { token } = useData()
     const [finance, setFinance] = useState<any>([])
+    const [filterData, setFilterData] = useState(finance)
     const [groupedMonth, setGroupedMonth] = useState<any>()
-    const [page, setPage] = useState(1)
-    const [total, setTotal] = useState(10)
+    const [page, setPage] = useState(0)
+
+    const [loading, setLoading] = useState<any>(true)
     const [summary, setSummary] = useState<any>()
     //const [header, setHeader] = useState<any>([])
-
-    const searchRef = useRef<any>(null)
-
-    useEffect(() => {
-        const load = async () => {
-            setFinance(await useFetch(endpoints.finance.getAll(`page=${page}&page_size=${total}`)))
-            await handleYear(years[0])
-        }
-        load()
-    }, [token])
-
-    const handleNext = async () => {
-        setFinance(await useFetch(endpoints.finance.getAll(`page=${page + 1}&page_size=${total}`)))
-        setPage(page + 1)
-    }
-    const handlePrev = async () => {
-        setFinance(await useFetch(endpoints.finance.getAll(`page=${page - 1}&page_size=${total}`)))
-        setPage(page - 1)
-    }
-
-    const handleSearch = async (e: any) => {
-        e.preventDefault()
-        const pattern = /https:\/\/pro\.housecallpro\.com\/app\/jobs\/(job_[a-zA-Z0-9_-]+)/g;
-        const search = searchRef?.current?.value
-        const match = pattern.exec(search)
-        if(match){
-            const url = match[1]
-            localAdd(`${url}`)
-            return
-        }
-        if (search === '') {
-            setFinance(await useFetch(endpoints.finance.getAll(`page=${page}&page_size=${total}`)))
-            return;
-        }
-        localAdd(search)
-        
-    }
-    const localAdd = async (search:string) => {
-        const rta = await useFetch(endpoints.finance.getOne(search))
-        if (!rta) { return; }
-        setFinance({ data: [rta], page: 1, page_size: 1, total_items: 1, total_pages: 1 })
-    }
 
     const category = [
         { id: 'totalAmount', text: 'Amount' },
@@ -74,10 +34,60 @@ export default function FinanceMainLayout() {
     ]
     const [selectedYear, setSelectedYear] = useState(years[0])
 
-    const handleYear = async (e:any) => {
+    const load = async () => {
+        setLoading(true)
+        setPage(0)
+        try {
+            const rta = await useFetch(endpoints.finance.getAll())
+            const chunked = chunkArray(rta)
+            setFinance(chunked)
+            setFilterData(chunked)
+        } catch (e) {
+            console.error("Error loading finance data:", e)
+        } finally {
+            setLoading(false)
+        }
+        setGroupedMonth(await useFetch(endpoints.finance.grouped(`date=${selectedYear.id}`)))
+        setSummary(await useFetch(endpoints.finance.summary('date=' + new Date(selectedYear.id).toLocaleDateString('en-CA'))))
+    }
+
+    useEffect(() => {
+        load()
+    }, [token])
+
+
+    const handleFilter = (e: any) => {
+        const value = e.target.value
+        if (value === '') {
+            setFilterData(finance)
+            setPage(0)
+            return
+        }
+        setFilterData([finance.flat().filter((obj: any) => obj?.job_number?.includes(value) || obj?.address?.toLowerCase().includes(value.toLowerCase()) || obj?.job_id?.includes(value))]);
+        setPage(0)
+        //setFilterData(data?.filter((d: any) => d.job_number.includes(value)))
+    }
+    function chunkArray<T>(array: T[], chunkSize = 20): T[][] {
+        const result = [];
+        for (let i = 0; i < array.length; i += chunkSize) {
+            result.push(array.slice(i, i + chunkSize));
+        }
+        return result;
+    }
+    const handleNext = () => {
+        if (page < finance.length - 1) {
+            setPage(page + 1);
+        }
+    }
+    const handlePrev = () => {
+        if (page > 0) {
+            setPage(page - 1);
+        }
+    }
+
+    const handleYear = async (e: any) => {
         setSelectedYear(e)
-        setGroupedMonth(await useFetch(endpoints.finance.grouped(`date=${e.id}`)))
-        setSummary(await useFetch(endpoints.finance.summary('date=' + new Date(e.id).toLocaleDateString('en-CA'))))
+        load()
     }
 
     const [selectedCategory, setSelectedCategory] = useState(category[0])
@@ -96,19 +106,18 @@ export default function FinanceMainLayout() {
                 </div>
             </div>
             <div className="flex flex-wrap gap-5 p-4 shadow-2xl rounded-lg bg-white">
-                    <Pagination page={page} prev={handlePrev} next={handleNext} />
+                <Pagination page={page} prev={handlePrev} total={finance?.length} next={handleNext} />
                 <div className="flex flex-col p-4 w-full rounded-lg gap-5">
-                    <form onSubmit={handleSearch}>
-                        <SearchInput ref={searchRef} />
-                        <Button type="submit"></Button>
-                    </form>
+                    <SearchInput ref={null} setFilter={handleFilter} placeholder="(Job url, Address): " />
                 </div>
                 <div className="overflow-auto flex flex-col gap-5 w-full bg-gray-100 lg:p-3 lg:rounded-lg">
-                    {finance?.data?.map((value: any, id: any) =>
-                        <FinanceCard project={value} />
-                    )}
+                    {!loading ? filterData[page]?.map((value: any, id: any) =>
+                        <FinanceCard key={value?.id} project={value}></FinanceCard>
+                    ):
+                    <Loader loading size={20} />
+                    }
                 </div>
-                <Pagination page={page} prev={handlePrev} next={handleNext} />
+                <Pagination total={finance?.length} page={page} prev={handlePrev} next={handleNext} />
             </div>
         </div>
     </>
