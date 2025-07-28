@@ -17,7 +17,7 @@ ARG NEXT_PUBLIC_API
 
 # 6. Build the Next.js app
 ENV NEXT_PUBLIC_HCP=https://pro.housecallpro.com/app/
-ENV NEXT_PUBLIC_API=https://portal-api-1051259236562.europe-west1.run.app
+ENV NEXT_PUBLIC_API=https://api.avilo.us
 ENV NEXT_PUBLIC_MANAGER=908mbdf4-5c1e-49e9-9c5a-324c921a80e8
 ENV NEXT_PUBLIC_PC=908mbdf4-5c1e-49e9-9c5a-324c921a90b8
 ENV NEXT_PUBLIC_CS=908mbdf4-5c1e-49e9-9c5a-324c921a90m2
