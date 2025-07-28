@@ -46,7 +46,7 @@ export default function HeaderComponent() {
     load()
   }, [token])
 
-  const handleOpen = async (id:string, _nid:string) => {
+  const handleOpen = async (id: string, _nid: string) => {
     setFinance(id)
     setNotifications(notifications.filter((n) => n.id !== _nid))
     await usePatch(endpoints.notification.see(_nid), {})
@@ -96,33 +96,36 @@ export default function HeaderComponent() {
                 </div>
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10 mt-2 w-60 h-fit origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                  className="absolute max-h-[500px] overflow-auto right-0 z-10 mt-2 w-60 h-fit origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                 >
                   {
                     notifications.length > 0 ? notifications.map((notification) => (
-                      <MenuItem>
-                        <Button
-                          onClick={() => handleOpen(notification?.notification?.comment?.finance?.id, notification?.id)}
-                          className="flex flex-col gap-3 text-left px-4 py-2 text-sm text-gray-700 w-full data-focus:bg-gray-100 data-focus:outline-hidden"
-                        >
-                          <div className='flex gap-2 items-center'>
-                            <img src={notification?.notification?.comment?.user?.picture} alt="" className='w-8 rounded-full' />
-                            <span className="font-bold">{notification?.notification?.comment?.user?.name}</span>
-                          </div>
-                          <div className='flex flex-col gap-1'>
-                            <span>{`${notification?.notification?.message}`}</span>
-                            <span>{`Job #${notification?.notification?.comment?.finance?.job_number}`}</span>
-                          </div>
-                        </Button>
-                      </MenuItem>
+                      <>
+                        <MenuItem>
+                          <Button
+                            onClick={() => handleOpen(notification?.notification?.comment?.finance?.id, notification?.id)}
+                            className="flex flex-col gap-3 text-left px-4 py-2 text-sm text-gray-700 w-full data-focus:bg-gray-100 data-focus:outline-hidden"
+                          >
+                            <div className='flex gap-2 items-center'>
+                              <img src={notification?.notification?.comment?.user?.picture} alt="" className='w-8 rounded-full' />
+                              <span className="font-bold">{notification?.notification?.comment?.user?.name}</span>
+                            </div>
+                            <div className='flex flex-col gap-1'>
+                              <span>{`${notification?.notification?.message}`}</span>
+                              <span>{`Job #${notification?.notification?.comment?.finance?.job_number}`}</span>
+                            </div>
+                          </Button>
+                        </MenuItem>
+                        <hr className='text-gray-300' />
+                      </>
                     ))
-                    :
-                    <MenuItem>
-                      <div className='p-2 font-bold text-sm gap-2 text-gray-500 flex flex-col items-center justify-center'>
-                        <CheckCircleIcon className='w-12' />
-                        <span>Nothing to show here.</span>
-                      </div>
-                    </MenuItem>
+                      :
+                      <MenuItem>
+                        <div className='p-2 font-bold text-sm gap-2 text-gray-500 flex flex-col items-center justify-center'>
+                          <CheckCircleIcon className='w-12' />
+                          <span>Nothing to show here.</span>
+                        </div>
+                      </MenuItem>
                   }
                 </MenuItems>
               </Menu>
@@ -215,7 +218,7 @@ export default function HeaderComponent() {
           </div>
         </div>
       </DisclosurePanel>
-      <FinanceDialog handleOpen={()=>setOpen(!open)} open={open} project_id={finance}  />
+      <FinanceDialog handleOpen={() => setOpen(!open)} open={open} project_id={finance} />
     </Disclosure>}
 
   </>)
