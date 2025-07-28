@@ -18,6 +18,7 @@ export default function FinanceInvoice(){
     const [page, setPage] = useState(0)
     const {account} = useData()
     const [totals, setTotals] = useState<any>({})
+    const [items, setItems] = useState<any>(0)
     const [values, setValues] = useState<any>({})
     const [loading, setLoading] = useState<any>(true)
     
@@ -28,6 +29,7 @@ export default function FinanceInvoice(){
         try {
             const rta = await useFetch(endpoints.finance.invoice(status))
             const chunked = chunkArray(rta?.data)
+            setItems(rta?.data?.length)
             setData(chunked)
             setFilterData(chunked)
             setTotals(Object.values(rta['0']))
@@ -48,13 +50,13 @@ export default function FinanceInvoice(){
     }
     
     const statusList = [
-        {id: 0, name: "Paid"},
-        {id: 1, name: "Unpaid"},
-        {id: -1, name: "Unsent"},
-        {id: 2, name: "Recents"},
-        {id: 30, name: "Overdue 30+"},
-        {id: 60, name: "Overdue 60+"},
-        {id: 90, name: "Overdue 90+"},
+        {id: 0, text: "Paid"},
+        {id: 1, text: "Unpaid"},
+        {id: -1, text: "Unsent"},
+        {id: 2, text: "Recents"},
+        {id: 30, text: "Overdue 30+"},
+        {id: 60, text: "Overdue 60+"},
+        {id: 90, text: "Overdue 90+"},
     ]
     const [status, setStatus] = useState<any>(statusList[0])
 
@@ -96,7 +98,7 @@ export default function FinanceInvoice(){
         </div>
         <div className="flex flex-col gap-5">
             <div className="flex gap-5">
-                <FinanceSummaryCard finance={values} />
+                <FinanceSummaryCard total={items} finance={values} />
                 <div className="flex flex-col rounded-xl bg-white  text-gray-800 shadow w-full p-4 gap-4">
                     <FinanceCategoryCard categories={categories} data={totals} />
                 </div>

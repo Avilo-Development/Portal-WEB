@@ -1,5 +1,3 @@
-"use client"
-
 import FinanceSummaryCard from "@/components/finace_summary.card";
 import FinanceTable from "@/components/finance.table";
 import FinanceCategoryCard from "@/components/finance_category.card";
@@ -17,6 +15,7 @@ export default function FinanceResponsible() {
     const [data, setData] = useState<any>({})
     const [filterData, setFilterData] = useState(data)
     const [page, setPage] = useState(0)
+    const [total, setTotal] = useState(0)
     const { account, users } = useData()
     const [responsible, setResponsible] = useState<any>({})
     const [totals, setTotals] = useState<any>({})
@@ -39,8 +38,9 @@ export default function FinanceResponsible() {
         setLoading(true)
         setPage(0)
         try {
-            const rta = await useFetch(endpoints.finance.responsible(id, `${props}${order}`))
+            const rta = await useFetch(endpoints.finance.responsible(id, `${props}`))
             const chunked = chunkArray(rta?.data)
+            setTotal(rta?.data.length)
             setData(chunked)
             setFilterData(chunked)
             setTotals(Object.values(rta['0']))
@@ -82,20 +82,20 @@ export default function FinanceResponsible() {
     }
 
     const years = [
-        { id: '2025', name: '2025' },
-        { id: '2024', name: '2024' },
-        { id: '2023', name: '2023' },
+        { id: '2025', text: '2025' },
+        { id: '2024', text: '2024' },
+        { id: '2023', text: '2023' },
     ]
-    const months = [{ id: '--', name: 'ALL' }, ...Array.from({ length: 12 }, (_, i) =>
-        ({ id: `${i + 1}`, name: new Date(2023, i, 1).toLocaleString('default', { month: 'long' }) })
+    const months = [{ id: '--', text: 'ALL' }, ...Array.from({ length: 12 }, (_, i) =>
+        ({ id: `${i + 1}`, text: new Date(2023, i, 1).toLocaleString('default', { month: 'long' }) })
     )];
 
     const [year, setYear] = useState<any>(years[0])
     const [month, setMonth] = useState<any>(months[0])
 
-    const days = [{ id: '--', name: 'ALL' }, ...Array.from({ length: new Date(year.id, month.id, 0).getDate() }, (_, i) => ({
+    const days = [{ id: '--', text: 'ALL' }, ...Array.from({ length: new Date(year.id, month.id, 0).getDate() }, (_, i) => ({
         id: `${i + 1}`,
-        name: `${i + 1}`,
+        text: `${i + 1}`,
     }))];
 
     const [day, setDay] = useState<any>(days[0])
@@ -122,20 +122,18 @@ export default function FinanceResponsible() {
             <div className="flex flex-col gap-5 w-full">
                 <h1 className="w-full text-center font-bold text-2xl">By Responsible</h1>
                 <div className="flex flex-col gap-5">
-                    <div className="flex justify-center lg:flex-row flex-col items-center p-3 gap-5 bg-white rounded-lg ">
+                    <div className="flex justify-center lg:flex-row flex-col items-center p-3 gap-5 bg-white rounded-lg shadow shadow-yellow-500">
                         <OptionList list={years} selected={year} setSelected={setYear} />
                         <OptionList list={months} selected={month} setSelected={setMonth} />
                         <OptionList list={days} selected={day} setSelected={setDay} />
                         <Button className='p-2 bg-gray-800 hover:bg-gray-600 duration-200 text-white rounded-lg cursor-pointer' onClick={handleDateChange}>Apply</Button>
                     </div>
                     <div className="flex flex-col gap-5 lg:flex-row">
-                        <FinanceSummaryCard finance={values} />
-                        <div className="flex flex-col rounded-xl bg-white  text-gray-800 shadow w-full p-4 gap-4">
-                            <FinanceCategoryCard categories={categories} data={totals} />
-                        </div>
+                        <FinanceSummaryCard total={total} finance={values} />
+                        <FinanceCategoryCard categories={categories} data={totals} />
                     </div>
                     <Pagination next={handleNext} prev={handlePrev} page={page} total={filterData.length} />
-                    <div className="flex lg:justify-between lg:flex-row flex-col gap-10 p-3 bg-white rounded-lg">
+                    <div className="flex lg:justify-between lg:flex-row flex-col gap-10 p-3 bg-white rounded-lg shadow">
                         <SearchInput setFilter={handleFilter} ref={null} placeholder="(Job id, Job #, Address): " />
                         <OptionList list={[unassgined, ...users]} selected={responsible} setSelected={handleChange} />
                     </div>

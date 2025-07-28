@@ -40,16 +40,14 @@ export default function CalendarComponent() {
 
         const today = new Date()
 
-        const getEventClass = (diffDays: number) => {
+        const getEventClass = (overdue: number) => {
 
-            if (diffDays < 0) return 'event-unsent';
-            if (diffDays === 0) return 'event-default'
-
-            if (diffDays > 90) return 'event-90';
-            else if (diffDays > 60) return 'event-60';
-            else if (diffDays > 30) return 'event-30';
-            else return 'event-29';
-
+            if (overdue < 0) return 'event-unsent'
+            if (overdue === 0) return 'event-default'
+            if (overdue <= 30) return 'event-30'
+            if (overdue <= 60) return 'event-60'
+            if (overdue <= 90) return 'event-90'
+            if (overdue > 90) return 'event-91'
         }
         if (hasRun.current) return;
         hasRun.current = true;
@@ -57,12 +55,12 @@ export default function CalendarComponent() {
             try {
                 const rta = await useFetch(endpoints.finance.getAll(`page_size=5000`))
                 const events = rta?.map((data: any) => {
-                    const end = new Date(data.job_date)
+                    const end = new Date(data?.service_date)
                     end.setHours(end.getHours() + 1)
 
                     return {
                         id: data?.id,
-                        start: format(data.job_date, 'yyyy-MM-dd HH:mm'),
+                        start: format(data.service_date, 'yyyy-MM-dd HH:mm'),
                         end: format(end, 'yyyy-MM-dd HH:mm'),
                         number: data.job_number,
                         address: data.address,

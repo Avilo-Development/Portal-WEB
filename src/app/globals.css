@@ -52,29 +52,30 @@ body {
   padding: 10px;
   width: 100%;
   font-size: 14px;
+  border: solid;
 }
 
 .event-default{
-  background: #4CAF50;
-  color: white;
+  background: oklch(0.982 0.018 155.826);
+  color: oklch(0.527 0.154 150.069);
 }
 .event-unsent{
   background: #464646;
   color: white;
 }
-.event-29{
-  background: rgb(157, 255, 0);
-  color: black;
+.event-91{
+  background: rgb(34, 33, 33);
+  color: rgb(241, 230, 230);
 }
 .event-30{
-  background: #fffb00;
-  color: black;
+  background:oklch(0.987 0.026 102.212);
+  color: oklch(0.554 0.135 66.442);
 }
 .event-60{
-  background: #e48408;
-  color: black;
+  background: oklch(0.98 0.016 73.684);
+  color: oklch(0.553 0.195 38.402);
 }
 .event-90{
-  background: #db0707;
-  color: white;
+  background: oklch(0.971 0.013 17.38);
+  color: oklch(0.505 0.213 27.518);
 }

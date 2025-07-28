@@ -62,23 +62,22 @@ export default function FinanceCategoryCard({ data, categories }: { data: any[],
     }
 
     return (
-        <Card {...({} as React.ComponentProps<typeof Card>)}>
-            <CardHeader {...({} as React.ComponentProps<typeof Card>)}
-                floated={false}
-                shadow={false}
-                color="transparent"
-                className="flex flex-col gap-4 rounded-none md:flex-row md:items-center"
-            >
-            </CardHeader>
-            <CardBody {...({} as React.ComponentProps<typeof Card>)} className="px-2 pb-0">
-                <Chart type="bar"
-                    height={240}
-                    series={[
-                        {
-                            name: "Value",
-                            data: data,
-                        }]} options={options} />
-            </CardBody>
-        </Card>
+            <Card {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col rounded-xl shadow-yellow-500 shadow bg-white  text-gray-800 w-full justify-center items-center grow">
+                <CardHeader {...({} as React.ComponentProps<typeof Card>)}
+                    floated={false}
+                    shadow={false}
+                    color="transparent"
+                    className="flex flex-col gap-4 rounded-none md:flex-row md:items-center"
+                >
+                </CardHeader>
+                <CardBody {...({} as React.ComponentProps<typeof Card>)} className="px-2 pb-0 w-full">
+                    <Chart type="bar"
+                        series={[
+                            {
+                                name: "Value",
+                                data: data,
+                            }]} options={options} />
+                </CardBody>
+            </Card>
     )
 }

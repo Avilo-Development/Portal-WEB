@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { useFetch } from "@/hooks/useFetch";
 import { endpoints } from "@/services/api";
 import Loader from "./loader";
+import Badge from "./badge";
 
 
-export default function FinanceSummaryCard({finance}:{finance:any}) {
+export default function FinanceSummaryCard({ finance, total }: { finance: any, total: number }) {
 
     const [chartConfig, setChartConfig] = useState<any>({})
     const [loading, setLoading] = useState<any>(true)
@@ -32,64 +33,48 @@ export default function FinanceSummaryCard({finance}:{finance:any}) {
                     enabled: false,
                 },
                 labels: ["Paid", "Debt"],
-                colors: ["#00897b", "#CD2F2F"],
+                colors: ["#7bf1a8", "#ffa2a2"],
                 legend: {
                     show: false,
                 },
             },
         })
-        if(finance){setLoading(false)}
+        if (finance) { setLoading(false) }
     }, [finance])
 
-    return <div className="flex flex-col rounded-xl bg-white  text-gray-800 shadow w-full justify-center items-center">
+    return <div className="flex flex-col rounded-xl shadow-[#324183] shadow bg-white h-full text-gray-800 w-full justify-center items-center">
         {!loading ? <div className="flex gap-10 p-5 justify-between items-center">
             {finance?.totalAmount ? <Card className="bg-transparent shadow-none" {...({} as React.ComponentProps<typeof Card>)}>
                 <CardHeader {...({} as React.ComponentProps<typeof Card>)} color="transparent" className="p-2 flex flex-col gap-2 justify-center items-center">
                     <span className="hover:underline underline-offset-2" >Summary</span>
                 </CardHeader>
-                <CardBody {...({} as React.ComponentProps<typeof Card>)} className="mt-4 grid place-items-center px-2">
+                <CardBody {...({} as React.ComponentProps<typeof Card>)} className="mt-4 grid place-items-center">
                     <Chart {...chartConfig} />
                 </CardBody>
-                <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                        <div className="rounded-full w-4 h-4 bg-[#020617]"></div>
-                        <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={parseInt(finance?.totalAmount)} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="rounded-full w-4 h-4 bg-[#00897b]"></div>
-                        <div className="flex gap-1"><span>Paid:</span> <NumericFormat value={parseInt(finance?.totalPaid) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="rounded-full w-4 h-4 bg-[#CD2F2F]"></div>
-                        <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={parseInt(finance?.totalDue)} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
-                    </div>
+                <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col gap-3">
+                    <Badge color='yellow' full='full'><span className="font-bold">Total Items: {total}</span></Badge>
+                    <Badge color='black' full='full'><span className="font-bold">Amount: </span><NumericFormat value={parseInt(finance?.totalAmount) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></Badge>
+                    <Badge color='green' full='full'><span className="font-bold">Paid: </span><NumericFormat value={parseInt(finance?.totalPaid) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></Badge>
+                    <Badge color='red' full='full'><span className="font-bold">Due: </span><NumericFormat value={parseInt(finance?.totalDue) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></Badge>
                 </CardFooter>
             </Card> : <div className="flex w-full items-center justify-center p-2"><span>Nothing to show here</span></div>}
-        </div> 
-        : 
-        <div className="flex gap-10 p-5 justify-between items-center">
-            <Card className="bg-transparent shadow-none" {...({} as React.ComponentProps<typeof Card>)}>
-                <CardHeader {...({} as React.ComponentProps<typeof Card>)} color="transparent" className="p-2 flex flex-col gap-2 justify-center items-center">
-                    <span className="hover:underline underline-offset-2" >Summary</span>
-                </CardHeader>
-                <CardBody {...({} as React.ComponentProps<typeof Card>)} className="mt-4 grid place-items-center px-2">
-                    <Loader size={280} loading={loading} />
-                </CardBody>
-                <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                        <div className="rounded-full w-4 h-4 bg-[#020617]"></div>
-                        <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={parseInt(finance?.totalAmount)} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="rounded-full w-4 h-4 bg-[#00897b]"></div>
-                        <div className="flex gap-1"><span>Paid:</span> <NumericFormat value={parseInt(finance?.totalPaid) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="rounded-full w-4 h-4 bg-[#CD2F2F]"></div>
-                        <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={parseInt(finance?.totalDue)} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></div>
-                    </div>
-                </CardFooter>
-            </Card>
-        </div>}
+        </div>
+            :
+            <div className="flex gap-10 p-5 justify-between items-center">
+                <Card className="bg-transparent shadow-none" {...({} as React.ComponentProps<typeof Card>)}>
+                    <CardHeader {...({} as React.ComponentProps<typeof Card>)} color="transparent" className="p-2 flex flex-col gap-2 justify-center items-center">
+                        <span className="hover:underline underline-offset-2" >Summary</span>
+                    </CardHeader>
+                    <CardBody {...({} as React.ComponentProps<typeof Card>)} className="mt-4 grid place-items-center px-2">
+                        <Loader size={280} loading={loading} />
+                    </CardBody>
+                    <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col gap-3">
+                        <Badge color='yellow' full='full'><span className="font-bold">Loading...</span></Badge>
+                        <Badge color='black' full='full'><span className="font-bold">Loading...</span></Badge>
+                        <Badge color='green' full='full'><span className="font-bold">Loading...</span></Badge>
+                        <Badge color='red' full='full'><span className="font-bold">Loading...</span></Badge>
+                    </CardFooter>
+                </Card>
+            </div>}
     </div>
 }

@@ -4,7 +4,8 @@ import FinanceCard from '@/components/finance.card'
 import Loader from '@/components/loader'
 import { useFetch } from '@/hooks/useFetch'
 import { endpoints } from '@/services/api'
-import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
+import { Button, Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useEffect, useState } from 'react'
 
 export default function FinanceDialog({ open, handleOpen, project_id }: { open: boolean, handleOpen: any, project_id: string }) {
@@ -65,6 +66,7 @@ export default function FinanceDialog({ open, handleOpen, project_id }: { open: 
               </div>
             </DialogPanel>
           </div>
+          <Button className="absolute"><XMarkIcon /></Button>
         </div>
       </Dialog>
     }

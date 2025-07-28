@@ -11,6 +11,7 @@ import OptionList from "@/components/OptionList";
 import { useFetch } from "@/hooks/useFetch";
 import SearchInput from "@/components/search.input";
 import Loader from "@/components/loader";
+import { useRouter } from "next/navigation";
 
 export default function FinanceMainLayout() {
     const { token } = useData()
@@ -34,7 +35,7 @@ export default function FinanceMainLayout() {
     ]
     const [selectedYear, setSelectedYear] = useState(years[0])
 
-    const load = async () => {
+    const load = async (year='2025-01-01') => {
         setLoading(true)
         setPage(0)
         try {
@@ -47,11 +48,15 @@ export default function FinanceMainLayout() {
         } finally {
             setLoading(false)
         }
-        setGroupedMonth(await useFetch(endpoints.finance.grouped(`date=${selectedYear.id}`)))
-        setSummary(await useFetch(endpoints.finance.summary('date=' + new Date(selectedYear.id).toLocaleDateString('en-CA'))))
+        setGroupedMonth(await useFetch(endpoints.finance.grouped(`date=${year}`)))
+        setSummary(await useFetch(endpoints.finance.summary('date=' + new Date(year).toLocaleDateString('en-CA'))))
     }
 
+    const router = useRouter()
+
     useEffect(() => {
+        const t = sessionStorage.getItem('token') || null
+        if(!t) {return router.push('/login')}
         load()
     }, [token])
 
@@ -87,7 +92,7 @@ export default function FinanceMainLayout() {
 
     const handleYear = async (e: any) => {
         setSelectedYear(e)
-        load()
+        load(e.id)
     }
 
     const [selectedCategory, setSelectedCategory] = useState(category[0])
@@ -96,11 +101,11 @@ export default function FinanceMainLayout() {
         <div className="w-full gap-5 relative flex flex-col">
             <h1 className="w-full text-center font-bold text-2xl">Dashboard</h1>
             <div className="flex gap-5 lg:flex-row flex-col">
-                <div className="sticky">
+                <div className="sticky flex flex-col gap-3">
                     <OptionList list={years} selected={selectedYear} setSelected={handleYear} />
-                    <FinanceSummaryCard finance={summary} />
+                    <FinanceSummaryCard finance={summary} total={filterData?.length} />
                 </div>
-                <div className="flex flex-col rounded-xl bg-white  text-gray-800 shadow w-full p-4 gap-4">
+                <div className="sticky flex flex-col gap-3 w-full">
                     <OptionList selected={selectedCategory} setSelected={setSelectedCategory} list={category} />
                     <FinanceCategoryCard categories={groupedMonth?.map((grouped: any) => grouped.month)} data={groupedMonth?.map((grouped: any) => grouped[selectedCategory.id])} />
                 </div>
@@ -110,7 +115,7 @@ export default function FinanceMainLayout() {
                 <div className="flex flex-col p-4 w-full rounded-lg gap-5">
                     <SearchInput ref={null} setFilter={handleFilter} placeholder="(Job url, Address): " />
                 </div>
-                <div className="overflow-auto flex flex-col gap-5 w-full bg-gray-100 lg:p-3 lg:rounded-lg">
+                <div className="overflow-auto flex flex-col gap-5 w-full lg:p-3 lg:rounded-lg">
                     {!loading ? filterData[page]?.map((value: any, id: any) =>
                         <FinanceCard key={value?.id} project={value}></FinanceCard>
                     ):

@@ -3,6 +3,7 @@ import FinanceDialog from '@/dialogs/finance.dialog'
 import { useData } from '@/hooks/contexts/global.context'
 import { useFetch, usePatch } from '@/hooks/useFetch'
 import { endpoints } from '@/services/api'
+import { config } from '@/services/config'
 import { Button, Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useEffect, useState } from 'react'
@@ -31,7 +32,7 @@ export default function HeaderComponent() {
   }
 
   const userNavigation = [
-    { name: `${account?.name} (${account?.role})`, href: () => { } },
+    { name: `${account?.name} (${account?.role?.name})`, href: () => { } },
     { name: 'Settings', href: () => { } },
     { name: 'Sign out', href: logout },
   ]
@@ -105,11 +106,12 @@ export default function HeaderComponent() {
                           className="flex flex-col gap-3 text-left px-4 py-2 text-sm text-gray-700 w-full data-focus:bg-gray-100 data-focus:outline-hidden"
                         >
                           <div className='flex gap-2 items-center'>
-                            <img src={notification?.notification?.comment?.user?.picture} alt="" />
+                            <img src={notification?.notification?.comment?.user?.picture} alt="" className='w-8 rounded-full' />
                             <span className="font-bold">{notification?.notification?.comment?.user?.name}</span>
                           </div>
                           <div className='flex flex-col gap-1'>
-                            <span>{`${notification?.notification?.message} > Job #${notification?.notification?.comment?.finance?.job_number}`}</span>
+                            <span>{`${notification?.notification?.message}`}</span>
+                            <span>{`Job #${notification?.notification?.comment?.finance?.job_number}`}</span>
                           </div>
                         </Button>
                       </MenuItem>

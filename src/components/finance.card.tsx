@@ -10,22 +10,30 @@ import Link from "next/link";
 import { usePatch, usePost } from "@/hooks/useFetch";
 import CommentCard from "./comment.card";
 import { Button, Textarea } from "@headlessui/react";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
+import { config } from "@/services/config";
 export default function FinanceCard({ project, children }: { project: any, children?: React.ReactNode }) {
 
-    const HCP = process.env.NEXT_PUBLIC_HCP
+    const unassgined = { id: null, text: 'Not assigned' }
 
-    const unassgined = { id: null, role: 'Not assigned' }
-
-    const [responsibleSelected, setResponsibleSelected] = useState<any>(project?.responsible ? project?.responsible : unassgined)
+    const [responsibleSelected, setResponsibleSelected] = useState<any>(unassgined)
     const commentRef = useRef<any>(null)
+    const router = useRouter()
 
     const [comments, setComments] = useState(project?.comments)
+    const [isAdmin, setIsAdmin] = useState(false)
 
     const { account, users, HCP_URL } = useData()
 
     useEffect(() => {
         setComments(project?.comments)
-    }, [project])
+        
+        if(!account) return
+
+        setIsAdmin(account?.role?.id ===config.MANAGER ||account?.role?.id===config.OWNER||account?.role?.id===config.DEV)
+        setResponsibleSelected(project.responsible ? project.responsible : unassgined)
+    }, [project, users])
 
     const options = {
         chart: {
@@ -37,56 +45,64 @@ export default function FinanceCard({ project, children }: { project: any, child
             enabled: false,
         },
         labels: ["Paid", "Debt"],
-        colors: ["#00897b", "#CD2F2F"],
+        colors: ["#00c951", "#fb2c36"],
     }
 
     const handleReponsibleChange = async (e: any) => {
-        const body = { responsible_id: e.id }
-        await usePatch(endpoints.finance.update(`${project?.id}`), body)
+        const body = { responsible: e, finance_id: project?.id }
+        const result = (await usePatch(endpoints.finance.updateResponsible(`${project?.id}`), body)).data
+        systemComment(result)
         setResponsibleSelected(e)
     }
 
+    const systemComment = async (rta:any) => {
+        commentRef.current.value = ''
+        setComments([...comments, { ...rta, user: account }])
+    }
     const addComment = async (e: any) => {
-        e.preventDefault()
+        e?.preventDefault()
+        const value = commentRef.current.value
+        if (value === '') return
+        commentRef.current.value = ''
         const body = {
-            text: commentRef.current?.value,
-            status: status.name,
+            text: value,
+            status:status.text,
             finance_id: project?.id
         }
         const rta = await usePost(endpoints.comment.create, body)
         setComments([...comments, { ...rta, user: account }])
-        commentRef.current.value = ''
     }
 
     const statusList = [
-        { id: 1, name: 'Unassigned' },
-        { id: 2, name: 'Follow-up' },
-        { id: 3, name: 'In review' },
-        { id: 4, name: 'Paid' },
+        { id: 1, text: 'Unassigned', color: 'black' },
+        { id: 2, text: 'Follow-up', color: 'blue' },
+        { id: 3, text: 'In review', color: 'yellow' },
+        { id: 4, text: 'Paid', color: 'green' },
+        { id: 5, text: 'Unrecoverable', color: 'red' },
     ]
-    const [status, setStatus] = useState(statusList[1])
+    const [status, setStatus] = useState(statusList[0])
 
-    const color = (overdue:number) => {
-        if(overdue<0) return 'gray'
-        if(overdue===0) return 'green'
-        if(overdue<=30) return 'yellow'
-        if(overdue<=60) return 'orange'
-        if(overdue<=90) return 'red'
-        if(overdue>90) return 'black'
+    const color = (overdue: number) => {
+        if (overdue < 0) return 'gray'
+        if (overdue === 0) return 'green'
+        if (overdue <= 30) return 'yellow'
+        if (overdue <= 60) return 'orange'
+        if (overdue <= 90) return 'red'
+        if (overdue > 90) return 'black'
     }
-
-    return <div className="flex flex-col shadow-2xl bg-white text-gray-800 w-full grow lg:rounded-lg">
+ 
+    return <div className="flex flex-col bg-white text-gray-800 w-full grow lg:rounded-lg shadow-[#324183] shadow">
         <div className="flex flex-col gap-10 p-5 justify-center items-center">
-                {children}
+            {children}
             <div className="flex w-full gap-3 lg:flex-row flex-col">
                 <Card {...({} as React.ComponentProps<typeof Card>)} className="bg-transparent shadow-none lg:min-w-sm">
                     <CardHeader {...({} as React.ComponentProps<typeof Card>)} color="transparent" className="p-2 flex flex-col gap-2 ">
                         <div className="flex gap-3">
-                            <a className="hover:underline underline-offset-2" href={`${HCP}customers/${project?.customer?.id}`}>{project?.customer?.name}</a>
+                            <a className="hover:underline underline-offset-2" href={`${config.HCP}customers/${project?.customer?.id}`}>{project?.customer?.name}</a>
                             <Badge color={color(project?.overdue)}>{<Link href={HCP_URL + "jobs/" + project?.job_id} >{project?.job_number}</Link>}</Badge>
                         </div>
                         <span>{project?.address}</span>
-                        <span className="font-semibold text-sm">{responsibleSelected.role}</span>
+                        {isAdmin ? <OptionList list={[unassgined,...users]} selected={responsibleSelected} setSelected={handleReponsibleChange} /> : <span className="font-semibold text-sm">{responsibleSelected.role?.name}</span>}
                         <hr className="text-gray-100" />
                         <span className="text-sm font-light">Job created: {new Date(project?.job_date).toDateString()}</span>
                         <span className="text-sm font-light">Invoice sent: {project?.invoice_date ? new Date(project?.invoice_date).toDateString() : "Invoice not sent"}</span>
@@ -97,41 +113,39 @@ export default function FinanceCard({ project, children }: { project: any, child
                         {project?.amount ? <Chart type="pie" width={200} height={200} series={[project?.paid || 0, project?.due]} options={options} /> : <div className="flex w-full items-center justify-center p-2"><span>Nothing to show here</span></div>}
                     </CardBody>
                     <CardFooter {...({} as React.ComponentProps<typeof Card>)} className="flex flex-col p-0 gap-1">
-                        <div className="flex items-center gap-2">
-                            <div className="rounded-full w-4 h-4 bg-[#020617]"></div>
-                            <div className="flex gap-1"><span>Amount:</span> <NumericFormat value={project?.amount} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="rounded-full w-4 h-4 bg-[#00897b]"></div>
-                            <div className="flex gap-1"><span>Paid:</span> <NumericFormat value={project?.paid || 0} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="rounded-full w-4 h-4 bg-[#CD2F2F]"></div>
-                            <div className="flex gap-1"><span>Debt:</span> <NumericFormat value={project?.due} displayType="text" prefix="$" thousandsGroupStyle="lakh" thousandSeparator="," /></div>
-                        </div>
+                        <Badge color='black' full='full'><span className="font-bold">Amount: </span><NumericFormat value={parseInt(project?.amount) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></Badge>
+                        <Badge color='green' full='full'><span className="font-bold">Paid: </span><NumericFormat value={parseInt(project?.paid) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></Badge>
+                        <Badge color='red' full='full'><span className="font-bold">Due: </span><NumericFormat value={parseInt(project?.due) || 0} displayType="text" prefix="$" thousandsGroupStyle="thousand" thousandSeparator="," /></Badge>
                     </CardFooter>
                 </Card>
-                <div className="flex flex-col p-2 lg:border-l border-gray-200 mt-3 overflow-auto w-full">
-                    <div className="flex flex-col gap-2 p-2 max-h-[450px] overflow-auto">
-                        <span className="font-light text-sm">Comments</span>
-                        <div className="flex flex-col w-full gap-5">
-                            {comments?.map((comment: any, id: any) => <>
-                                <CommentCard setComments={setComments} picture={comment?.user?.picture} user_id={comment?.user?.id} text={comment.text} date={comment.createdAt} name={comment?.user?.name} status={comment.status} key={id} id={comment.id} />
-                            </>)}
+                <div className="flex flex-col p-2 lg:border-l border-gray-200 mt-3 overflow-auto w-full max-h-[460px] h-[640px]">
+                    <div className="flex flex-col gap-2 p-2 max-h-full h-full overflow-auto border-b-2 border-gray-200/60 ">
+                        <div className="flex gap-2">
+                            <span className="font-light text-sm">Comments</span>
+                            <hr />
                         </div>
+                        {comments.length ? <div className="flex flex-col w-full gap-3">
+                            {comments?.map((comment: any, id: any) => <>
+                                <CommentCard color={[...statusList, {text: 'system', color: 'violet'}].filter((a:any) => a.text===comment?.status)[0].color} setComments={setComments} picture={comment?.user?.picture} user_id={comment?.user?.id} text={comment.text} date={comment.createdAt} name={comment?.user?.name} status={comment.status} key={id} id={comment.id} />
+                            </>)}
+                        </div> : <div className="flex flex-col w-full gap-2 justify-center items-center h-full">
+                            <InformationCircleIcon width={32} />
+                            <span>No comments on this project</span>
+                        </div>}
                     </div>
-                    <form onSubmit={addComment} className="flex gap-2">
+                    <form onSubmit={addComment} className="flex gap-2 max-h-[460px] pt-2">
                         <img src={account?.picture} alt="" className="size-8 rounded-full" />
-                        <div className="bg-black/5 rounded-lg w-full">
+                        <div className="w-full">
                             <div className="flex">
                                 <Textarea onKeyDown={(e) => {
                                     if (e.key === 'Enter' && !e.shiftKey) {
                                         addComment(e)
                                     }
-                                }} rows={3} wrap="soft" ref={commentRef} className="font-light text-sm p-2 outline-0 w-full" placeholder="Comment:" />
+                                }} rows={2}
+                                    placeholder="Add your comment..." wrap="soft" ref={commentRef} className="w-full p-3 rounded-xl shadow-[#324183] shadow bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300 resize-none" />
                                 <Button type="submit"></Button>
                             </div>
-                            <OptionList list={statusList} setSelected={setStatus} selected={status} />
+                            <OptionList list={statusList} setSelected={setStatus} color={status.color} selected={status} />
                         </div>
                     </form>
                 </div>

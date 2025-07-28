@@ -6,13 +6,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import ITimeReporting from "@/interfaces/time_reporting.interface";
 import ISalary from "@/interfaces/salary.interface";
 import { endpoints } from "@/services/api";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useFetch } from "../useFetch";
-
-interface IContext {
-    users: any, setUsers: any, technician: ITechnician[], setTechnician: any, salary: any, setSalary: any, timeReport: any, setTimeReport: any, finance: any, account: any, setAccount: any, token: any, setToken: any, HCP_URL: string
-}
 
 const GlobalContext = createContext<any>({})
 
@@ -36,6 +31,7 @@ export default function GlobalProvider({ children }: { children: ReactNode }) {
             }
             setToken(t)
         } catch (error) {
+            sessionStorage.removeItem('token')
             console.error('Invalid token:', error);
             router.push('/login')
             return; // Treat malformed token as expired

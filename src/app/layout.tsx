@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ardan USA",
-  description: "Ardan USA Admin portal",
+  title: "Avilo Portal",
+  description: "Avilo Admin portal",
 };
 export default function RootLayout({
   children,

@@ -11,7 +11,6 @@ export default function FinanceLayout({
     children: React.ReactNode;
 }>) {
 
-    const [open, setOpen] = useState(false)
     const current_path = 'finance'
 
     const routes = [
@@ -51,10 +50,10 @@ export default function FinanceLayout({
     return <div className="min-h-full">
 
         <header className="bg-white">
-            <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+            <nav aria-label="Global" className="mx-auto flex max-w-full items-center justify-between p-6 lg:px-8 shadow">
                 <div className="flex lg:flex-1 gap-2">
-                    <ChartBarIcon className="w-8" />
-                    <a href={"/"+current_path} className="text-2xl font-bold tracking-tight text-gray-900 underline-0 hover:underline underline-offset-4"> Finance Report</a>
+                    <ChartBarIcon className="w-8 text-yellow-500" />
+                    <a href={"/"+current_path} className="text-2xl font-bold tracking-tight text-yellow-500 underline-0 hover:underline underline-offset-4"> Finance Report</a>
                 </div>
                 <div className="flex lg:hidden">
                     <button
@@ -79,7 +78,7 @@ export default function FinanceLayout({
 
                                     <PopoverPanel
                                         transition
-                                        className="absolute top-full -left-8 z-50 mt-3 w-fit max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+                                        className="absolute top-full -left-16 z-50 mt-3 w-fit max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
                                     >
                                         <div className="p-4">
                                             {route.childs.map((item) => (
@@ -134,9 +133,9 @@ export default function FinanceLayout({
                             <XMarkIcon aria-hidden="true" className="size-6" />
                         </button>
                     </div>
-                    <div className="mt-6 flow-root w-fit">
+                    <div className="mt-6 flow-root w-full">
                         <div className="-my-6 divide-y divide-gray-500/10">
-                            <div className="space-y-2 py-6 w-fit">
+                            <div className="space-y-2 py-6 w-full">
                                 {
                                     routes.map((route): any => (
                                         route.childs ? <Disclosure key={route.name} as="div" className="-mx-3">
@@ -172,7 +171,7 @@ export default function FinanceLayout({
             </Dialog>
         </header>
         <main>
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex gap-5 flex-wrap justify-center">
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex gap-5 flex-wrap justify-center ">
                 {children}
             </div>
         </main>

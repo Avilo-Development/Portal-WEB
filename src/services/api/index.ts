@@ -16,6 +16,7 @@ export const endpoints = {
         summary: (query:string) =>`${url}/finance/summary?${query}`,
         grouped: (props:string) => `${url}/finance/grouped?${props}`,
         update: (id:string) => `${url}/finance/${id}`,
+        updateResponsible: (id:string) => `${url}/finance/responsible/${id}`,
     },
     comment: {
         create: `${url}/comment`,

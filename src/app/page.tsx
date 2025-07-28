@@ -48,8 +48,8 @@ export default function Home() {
                 </div>
                 <ProgressBar value={((paid/parseInt(finance?.totalAmount))*100)} />
                 <div className="flex justify-between ">
-                  <span><NumericFormat className="max-w-32 cursor-pointer" value={paid/100} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Paid" /></span>
-                  <span><NumericFormat className="max-w-30 cursor-pointer" value={unpaid} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Unpaid" /></span>
+                  <span><NumericFormat thousandsGroupStyle="lakh" className="max-w-32 cursor-pointer" value={paid/1000} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Paid" /></span>
+                  <span><NumericFormat thousandsGroupStyle="thousand" className="max-w-30 cursor-pointer" value={unpaid} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Unpaid" /></span>
                 </div>
               </div>
             </DashboardCard>

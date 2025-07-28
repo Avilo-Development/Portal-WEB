@@ -26,6 +26,9 @@ export default function FinanceTable({ data }: { data: any}) {
                     <th className="px-6 py-3">
                         <span>Job #</span>
                     </th>
+                    <th className="px-6 py-3">
+                        <span>Cuastomer Name</span>
+                    </th>
                     <th className="px-6 py-3 cursor-pointer" onClick={handleSort}>
                         Invoice Sent At
                     </th>
@@ -33,7 +36,7 @@ export default function FinanceTable({ data }: { data: any}) {
                         Invoice Paid At
                     </th>
                     <th className="px-6 py-3">
-                        Job Date
+                        Service Date
                     </th>
                     <th className="px-6 py-3">
                         Amount
@@ -42,10 +45,10 @@ export default function FinanceTable({ data }: { data: any}) {
                         Paid
                     </th>
                     <th className="px-6 py-3">
-                        Due
+                        Debt
                     </th>
                     <th className="px-6 py-3">
-                        Comments
+                        Overdue
                     </th>
                     <th className="px-6 py-3">
                         Address
@@ -60,8 +63,11 @@ export default function FinanceTable({ data }: { data: any}) {
                                     ? 'bg-gray-700 text-blue-800 font-medium'
                                     : 'bg-gray-800'
                                 }`} onDoubleClick={handleOpen} key={itemId}>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white underline underline-offset-2">
                                 <a href={`${HCP_URL}jobs/${item?.job_id}`}>{item?.job_number}</a>
+                            </td>
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-72 truncate underline underline-offset-2">
+                                <a href={`${HCP_URL}customers/${item?.customer?.id}`}>{item?.customer?.name}</a>
                             </td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {item?.invoice_date ? new Date(item?.invoice_date).toLocaleDateString() : "Unsent"}
@@ -70,7 +76,7 @@ export default function FinanceTable({ data }: { data: any}) {
                                 {item?.invoice_paid_date ? new Date(item?.invoice_paid_date).toLocaleDateString(): "Unpaid"}
                             </td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {new Date(item?.job_date).toLocaleDateString()}
+                                {new Date(item?.service_date).toLocaleDateString()}
                             </td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {item?.amount}
@@ -82,7 +88,7 @@ export default function FinanceTable({ data }: { data: any}) {
                                 {item?.due}
                             </td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {item?.comments?.length}
+                                {item?.overdue}
                             </td>
                             <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {item?.address}
