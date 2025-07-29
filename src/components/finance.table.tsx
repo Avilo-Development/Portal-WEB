@@ -63,34 +63,34 @@ export default function FinanceTable({ data }: { data: any}) {
                                     ? 'bg-gray-700 text-blue-800 font-medium'
                                     : 'bg-gray-800'
                                 }`} onDoubleClick={handleOpen} key={itemId}>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white underline underline-offset-2">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap underline underline-offset-2">
                                 <a href={`${HCP_URL}jobs/${item?.job_id}`}>{item?.job_number}</a>
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-72 truncate underline underline-offset-2">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap max-w-72 truncate underline underline-offset-2">
                                 <a href={`${HCP_URL}customers/${item?.customer?.id}`}>{item?.customer?.name}</a>
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {item?.invoice_date ? new Date(item?.invoice_date).toLocaleDateString() : "Unsent"}
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {item?.invoice_paid_date ? new Date(item?.invoice_paid_date).toLocaleDateString(): "Unpaid"}
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {new Date(item?.service_date).toLocaleDateString()}
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {item?.amount}
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {item?.paid}
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {item?.due}
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {item?.overdue}
                             </td>
-                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" className="px-6 py-4 font-medium text-gray-50 whitespace-nowrap">
                                 {item?.address}
                             </td>
                         </tr>
