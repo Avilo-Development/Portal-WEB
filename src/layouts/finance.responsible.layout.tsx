@@ -122,6 +122,7 @@ export default function FinanceResponsible() {
             <div className="flex flex-col gap-5 w-full">
                 <h1 className="w-full text-center font-bold text-2xl">By Responsible</h1>
                 <div className="flex flex-col gap-5">
+                    <span>Service Date</span>
                     <div className="flex justify-center lg:flex-row flex-col items-center p-3 gap-5 bg-white rounded-lg shadow shadow-yellow-500">
                         <OptionList list={years} selected={year} setSelected={setYear} />
                         <OptionList list={months} selected={month} setSelected={setMonth} />

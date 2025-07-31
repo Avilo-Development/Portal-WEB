@@ -40,7 +40,7 @@ export default function CommentCard({ text, name, date, status, picture, user_id
             </div>
             <div className="flex gap-3 font-light text-xs">
                 {(isAccount && !status.includes('system')) && <TrashIcon onClick={handleRemove} className="cursor-pointer hover:text-red-400 duration-150" width={16} />}
-                <span className="">{formatDistanceToNow(new Date(date), { addSuffix: false })}</span>
+                <span className="">{`${new Date(date).toLocaleDateString()} at ${new Date(date).toLocaleTimeString()}`}</span>
                 <div className="underline underline-offset-2">{status}</div>
             </div>
         </div>

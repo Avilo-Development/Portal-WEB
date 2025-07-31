@@ -124,7 +124,7 @@ export default function FinanceCard({ project, children }: { project: any, child
                             <span className="font-light text-sm">Comments</span>
                             <hr />
                         </div>
-                        {comments.length ? <div className="flex flex-col w-full gap-3">
+                        {comments.length ? <div className="flex flex-col-reverse w-full gap-3">
                             {comments?.map((comment: any, id: any) => <>
                                 <CommentCard color={[...statusList, {text: 'system', color: 'violet'}].filter((a:any) => a.text===comment?.status)[0].color} setComments={setComments} picture={comment?.user?.picture} user_id={comment?.user?.id} text={comment.text} date={comment.createdAt} name={comment?.user?.name} status={comment.status} key={id} id={comment.id} />
                             </>)}

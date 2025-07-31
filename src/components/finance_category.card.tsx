@@ -6,7 +6,6 @@ export default function FinanceCategoryCard({ data, categories }: { data: any[],
         chart: {
             toolbar: { show: false },
         },
-        title: { text: '2025 Report' },
         dataLabels: { enabled: false },
         colors: ['#181c2c'],
         plotOptions: {

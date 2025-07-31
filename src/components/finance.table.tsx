@@ -59,7 +59,7 @@ export default function FinanceTable({ data }: { data: any}) {
                 {
                     values?.length > 0 && values?.map((item: any, itemId: any) => (
                         <tr onClick={() => {setProject(item.id)}}
-                            className={`cursor-pointer border-b dark:border-gray-700 border-gray-200  ${project === item.id
+                            className={`cursor-pointer  dark:border-gray-700 border-gray-200 hover:border-gray-200 hover:border  ${project === item.id
                                     ? 'bg-gray-700 text-blue-800 font-medium'
                                     : 'bg-gray-800'
                                 }`} onDoubleClick={handleOpen} key={itemId}>

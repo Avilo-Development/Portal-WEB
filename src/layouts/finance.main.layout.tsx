@@ -18,6 +18,7 @@ export default function FinanceMainLayout() {
     const [finance, setFinance] = useState<any>([])
     const [filterData, setFilterData] = useState(finance)
     const [groupedMonth, setGroupedMonth] = useState<any>()
+    const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
 
     const [loading, setLoading] = useState<any>(true)
@@ -39,8 +40,9 @@ export default function FinanceMainLayout() {
         setLoading(true)
         setPage(0)
         try {
-            const rta = await useFetch(endpoints.finance.getAll())
+            const rta = await useFetch(endpoints.finance.getAll(`date=${year}`))
             const chunked = chunkArray(rta)
+            setTotal(rta.length)
             setFinance(chunked)
             setFilterData(chunked)
         } catch (e) {
@@ -68,7 +70,12 @@ export default function FinanceMainLayout() {
             setPage(0)
             return
         }
-        setFilterData([finance.flat().filter((obj: any) => obj?.job_number?.includes(value) || obj?.address?.toLowerCase().includes(value.toLowerCase()) || obj?.job_id?.includes(value))]);
+        setFilterData([finance.flat().filter((obj: any) => obj?.job_number?.includes(value) || 
+            obj?.address?.toLowerCase().includes(value.toLowerCase()) || 
+            obj?.job_id?.includes(value) || 
+            obj?.responsible?.name?.toLowerCase().includes(value.toLowerCase()) ||
+            obj?.customer?.name?.toLowerCase().includes(value.toLowerCase())
+        )]);
         setPage(0)
         //setFilterData(data?.filter((d: any) => d.job_number.includes(value)))
     }
@@ -80,7 +87,7 @@ export default function FinanceMainLayout() {
         return result;
     }
     const handleNext = () => {
-        if (page < finance.length - 1) {
+        if (page <= finance.length - 1) {
             setPage(page + 1);
         }
     }
@@ -103,7 +110,7 @@ export default function FinanceMainLayout() {
             <div className="flex gap-5 lg:flex-row flex-col">
                 <div className="sticky flex flex-col gap-3">
                     <OptionList list={years} selected={selectedYear} setSelected={handleYear} />
-                    <FinanceSummaryCard finance={summary} total={filterData?.length} />
+                    <FinanceSummaryCard finance={summary} total={total} />
                 </div>
                 <div className="sticky flex flex-col gap-3 w-full">
                     <OptionList selected={selectedCategory} setSelected={setSelectedCategory} list={category} />
