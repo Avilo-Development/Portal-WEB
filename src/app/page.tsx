@@ -35,21 +35,21 @@ export default function Home() {
           </div>
         </header>
         <main>
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex gap-5 flex-wrap">
+          <div className="mx-auto px-4 py-6 sm:px-6 lg:px-8 flex gap-5 flex-wrap h-[calc(100vh-148px)]">
             <DashboardCard path="finance">
-              <div className="flex flex-col gap-3">
-                <div className="flex gap-3 items-center font-semibold text-3xl">
-                  <ChartBarIcon className="w-8 h-8 text-gray-500" />
-                  <span className="text-lg font-semibold">Finance</span>
+              <div className="flex flex-col gap-3 h-full">
+                <div className="flex gap-3 items-center font-semibold text-3xl self-start text-yellow-500">
+                  <ChartBarIcon className="w-8 h-8 " />
+                  <span className="text-2xl font-semibold">Finance</span>
                 </div>
-                <div className="flex flex-col items-center gap-2 ">
-                  <NumericFormat className="text-6xl font-semibold w-44 cursor-pointer" value={parseInt(finance?.totalAmount) / 1000000} allowLeadingZeros thousandSeparator="," prefix="$" suffix="M" decimalScale={1} />
-                  <p className="font-semibold">Revenue this FY</p>
+                <div className="flex flex-col items-center h-full justify-center self-center text-gray-600 w-full">
+                  <NumericFormat className="text-[10rem] font-semibold text-center cursor-pointer max-w-full" value={parseInt(finance?.totalAmount) / 1000000} allowLeadingZeros thousandSeparator="," prefix="$" suffix="M" decimalScale={1} />
+                  <p className="font-semibold text-3xl">Revenue this <span className="font-bold text-yellow-600 text-4xl">2025</span></p>
                 </div>
                 <ProgressBar value={((paid/parseInt(finance?.totalAmount))*100)} />
-                <div className="flex justify-between ">
-                  <span><NumericFormat thousandsGroupStyle="lakh" className="max-w-32 cursor-pointer" value={paid/1000} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Paid" /></span>
-                  <span><NumericFormat thousandsGroupStyle="thousand" className="max-w-30 cursor-pointer" value={unpaid} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Unpaid" /></span>
+                <div className="flex justify-between text-3xl text-gray-600">
+                  <span><NumericFormat type="text" contentEditable={false} thousandsGroupStyle="lakh" className="text-start cursor-pointer w-full" value={paid/1000} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Paid" /></span>
+                  <span><NumericFormat type="text" thousandsGroupStyle="thousand" className="text-end cursor-pointer w-full grow" value={unpaid} decimalScale={1} allowLeadingZeros prefix="$" suffix="K Unpaid" /></span>
                 </div>
               </div>
             </DashboardCard>

@@ -98,7 +98,7 @@ export default function FinanceCard({ project, children }: { project: any, child
                 <Card {...({} as React.ComponentProps<typeof Card>)} className="bg-transparent shadow-none lg:min-w-sm">
                     <CardHeader {...({} as React.ComponentProps<typeof Card>)} color="transparent" className="p-2 flex flex-col gap-2 ">
                         <div className="flex gap-3">
-                            <a className="hover:underline underline-offset-2" href={`${config.HCP}customers/${project?.customer?.id}`}>{project?.customer?.name}</a>
+                            <a className="hover:underline underline-offset-2" href={`/finance/customer/${project?.customer?.id}`}>{project?.customer?.name}</a>
                             <Badge color={color(project?.overdue)}>{<Link href={HCP_URL + "jobs/" + project?.job_id} >{project?.job_number}</Link>}</Badge>
                         </div>
                         <span>{project?.address}</span>

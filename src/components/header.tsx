@@ -91,7 +91,7 @@ export default function HeaderComponent() {
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open Notifications</span>
                     <BellIcon aria-hidden="true" className="size-6" />
-                    {notifications.length > 0 && <span className='w-4 rounded-full h-4 bg-red-500 absolute top-0 right-0 text-white font-extralight text-xs text-center'>{notifications.length}</span>}
+                    {notifications.length > 0 && <span className='min-w-4 rounded-full h-4 bg-red-500 absolute top-0 right-0 text-white font-extralight text-xs text-center'>{notifications.length>99?'99+':notifications.length}</span>}
                   </MenuButton>
                 </div>
                 <MenuItems
