@@ -19,7 +19,7 @@ export default function FinanceTable({ data }: { data: any}) {
     const handleSort = () => {
         setValues(values?.sort((a:any, b:any) => new Date(a?.invoice_date).getTime() - new Date(b?.invoice_date).getTime()))
     }
-    return <div className="relative overflow-x-auto shadow-md sm:rounded-lg overflow-auto">
+    return <div className="relative overflow-x-auto shadow-md sm:rounded-lg overflow-auto w-full">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>

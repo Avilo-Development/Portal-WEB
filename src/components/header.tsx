@@ -3,10 +3,10 @@ import FinanceDialog from '@/dialogs/finance.dialog'
 import { useData } from '@/hooks/contexts/global.context'
 import { useFetch, usePatch } from '@/hooks/useFetch'
 import { endpoints } from '@/services/api'
-import { config } from '@/services/config'
 import { Button, Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useEffect, useState } from 'react'
+import SearchInput from './search.input'
 
 const navigation = [
   { name: 'Dashboard', href: '/', current: true },
@@ -24,6 +24,7 @@ function classNames(...classes: any) {
 export default function HeaderComponent() {
   const { token, account } = useData()
   const [notifications, setNotifications] = useState<any[]>([])
+  const [filterData, setFilterData] = useState(notifications)
   const [finance, setFinance] = useState<string>('')
   const [open, setOpen] = useState<any>(false)
   const logout = () => {
@@ -42,6 +43,7 @@ export default function HeaderComponent() {
     const load = async () => {
       const rta = await useFetch(endpoints.notification.getUnseen)
       setNotifications(rta)
+      setFilterData(rta)
     }
     load()
   }, [token])
@@ -52,6 +54,16 @@ export default function HeaderComponent() {
     await usePatch(endpoints.notification.see(_nid), {})
     setOpen(true)
   }
+
+  const handleFilter = (e: any) => {
+        const value = e.target.value
+        if (value === '') {
+            setFilterData(notifications)
+            return
+        }
+        setFilterData(notifications.filter((obj: any) => obj?.notification?.comment?.finance?.job_number?.includes(value) || obj?.notification?.comment?.user?.name?.toLowerCase().includes(value.toLowerCase())));
+        //setFilterData(data?.filter((d: any) => d.job_number.includes(value)))
+    }
 
   return (<>
     {token && <Disclosure as="nav" className="bg-gray-900 fixed z-10 w-full top-0 left-0">
@@ -98,8 +110,9 @@ export default function HeaderComponent() {
                   transition
                   className="absolute max-h-[500px] overflow-auto right-0 z-10 mt-2 w-60 h-fit origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                 >
+                  <div className='p-3'><SearchInput placeholder='job #, Employee' ref={null} setFilter={handleFilter} /></div>
                   {
-                    notifications.length > 0 ? notifications.map((notification) => (
+                    filterData.length > 0 ? filterData.map((notification) => (
                       <>
                         <MenuItem>
                           <Button
